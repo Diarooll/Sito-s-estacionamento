@@ -53,49 +53,60 @@
   transition: none; /* parallax por frame */
 }
 
-/* ---------- Faixas de luz (faróis) ---------- */
+/* ---------- Faixas de luz: rastros de faróis (longa exposição) ----------
+   Ambiente, não efeito: finas, sem halo, pontas que somem, cores dessaturadas,
+   passagens lentas com pausa longa entre elas. Só transform + opacity. */
 .hero__beam {
-  --beam-w: 42vw;
-  --beam-dur: 7s;
+  --beam-w: 46vw;
+  --beam-dur: 20s;
   --beam-delay: 0s;
+  --beam-color: rgba(200, 30, 36, .5);
+  --beam-peak: .9;
   position: absolute;
   left: 0;
   top: 40%;
+  z-index: 2;
   width: var(--beam-w);
-  z-index: 2; /* acima dos fades: é o elemento vivo da cena */
-  height: 3px;
-  border-radius: 3px;
-  background: linear-gradient(90deg, transparent, rgba(237, 28, 36, .7) 55%, rgba(255, 140, 140, 1));
-  box-shadow: 0 0 10px 1px rgba(237, 28, 36, .45);
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--beam-color) 55%, transparent);
   opacity: 0;
   transform: translate3d(-100%, 0, 0);
   animation: hero-beam var(--beam-dur) linear var(--beam-delay) infinite;
 }
 
-/* halo suave em volta da faixa (gradiente, sem filter) */
-.hero__beam::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 64px;
-  margin-top: -32px;
-  background: radial-gradient(55% 50% at 100% 50%, rgba(237, 28, 36, .5), transparent 70%),
-              linear-gradient(90deg, transparent 20%, rgba(237, 28, 36, .14));
-  border-radius: 50%;
+/* lanterna traseira: vermelho escurecido, da esquerda para a direita */
+.hero__beam--1 { top: 36%; --beam-w: 48vw; --beam-dur: 19s; --beam-delay: -3s; }
+
+/* farol: branco quente bem fraco, no sentido contrário */
+.hero__beam--2 {
+  top: 63%;
+  --beam-w: 40vw;
+  --beam-dur: 24s;
+  --beam-delay: -14s;
+  --beam-color: rgba(255, 235, 210, .25);
+  height: 1px;
+  animation-direction: reverse;
 }
 
-.hero__beam--1 { top: 34%; --beam-w: 44vw; --beam-dur: 6.5s; --beam-delay: -1s; }
-.hero__beam--2 { top: 61%; --beam-w: 30vw; --beam-dur: 9s;   --beam-delay: -5s; height: 2px; }
-.hero__beam--3 { top: 79%; --beam-w: 56vw; --beam-dur: 12s;  --beam-delay: -8s; }
+/* 3ª: só desktop, quase imperceptível */
+.hero__beam--3 {
+  top: 78%;
+  --beam-w: 36vw;
+  --beam-dur: 25s;
+  --beam-delay: -21s;
+  --beam-color: rgba(200, 30, 36, .3);
+  --beam-peak: .6;
+  height: 1px;
+}
 
 @keyframes hero-beam {
-  /* invisível enquanto cruza a coluna do texto; acende na metade direita */
+  /* passa em ~55% do ciclo e some; o resto é pausa.
+     Acende só depois de cruzar a coluna do texto. */
   0%   { transform: translate3d(-100%, 0, 0); opacity: 0; }
-  30%  { opacity: 0; }
-  42%  { opacity: 1; }
-  88%  { opacity: 1; }
+  20%  { opacity: 0; }
+  30%  { opacity: var(--beam-peak); }
+  46%  { opacity: var(--beam-peak); }
+  55%  { transform: translate3d(calc(100vw + 10%), 0, 0); opacity: 0; }
   100% { transform: translate3d(calc(100vw + 10%), 0, 0); opacity: 0; }
 }
 
@@ -333,9 +344,9 @@
   }
 
   /* faixas só na metade de cima (área do E), longe do texto */
-  .hero__beam--1 { top: 16%; }
-  .hero__beam--2 { top: 27%; }
-  .hero__beam--3 { top: 38%; }
+  .hero__beam--1 { top: 18%; }
+  .hero__beam--2 { top: 31%; }
+  .hero__beam--3 { display: none; }
 
   .hero__content {
     align-self: end;

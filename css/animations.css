@@ -100,7 +100,7 @@
   left: auto;
   right: 18%;
   transform: none;
-  animation: hero-beam-pulse 6s var(--ease-in-out) var(--beam-delay) infinite alternate;
+  animation: hero-beam-pulse 9s var(--ease-in-out) var(--beam-delay) infinite alternate;
 }
 .is-reduced .hero__beam--2 { right: 30%; }
 .is-reduced .hero__beam--3 { right: 8%; }
@@ -110,8 +110,8 @@
 }
 
 @keyframes hero-beam-pulse {
-  from { opacity: .15; }
-  to   { opacity: .7; }
+  from { opacity: .1; }
+  to   { opacity: .45; }
 }
 
 .is-reduced .hours__status::after {
@@ -178,7 +178,7 @@
     left: auto;
     right: 18%;
     transform: none;
-    animation: hero-beam-pulse 6s var(--ease-in-out) var(--beam-delay) infinite alternate;
+    animation: hero-beam-pulse 9s var(--ease-in-out) var(--beam-delay) infinite alternate;
   }
   .hero__beam--2 { right: 30%; }
   .hero__beam--3 { right: 8%; }
