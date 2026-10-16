@@ -305,38 +305,64 @@
   color: #5a5a5a;
 }
 
-/* ---------- Abas ---------- */
+/* ---------- Abas ----------
+   Mobile: a lista ocupa 100% e as abas dividem o espaço (flex 1 1 0, podem
+   quebrar linha) — nunca há scroll lateral. Do 640px em diante a lista fica
+   no tamanho do conteúdo (max-content, limitado a 100%). */
 .tabs__list {
   --indicator-x: 0px;
   --indicator-w: 0px;
   position: relative;
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   max-width: 100%;
-  padding: 5px;
-  margin-bottom: 1.75rem;
+  padding: 4px;
+  margin-bottom: 1.5rem;
   border: 1px solid var(--borda);
   border-radius: 999px;
   background: var(--grafite);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.tabs__list::-webkit-scrollbar {
-  display: none;
 }
 
 .tabs__tab {
   position: relative;
   z-index: 1;
-  flex: 1 0 auto;
+  flex: 1 1 0;
+  min-width: 0;
   min-height: 44px;
-  padding: .6rem 1.2rem;
+  padding: .5rem .75rem;
   border-radius: 999px;
   color: var(--cinza);
   font-weight: 600;
-  font-size: .9375rem;
-  white-space: nowrap;
+  font-size: .875rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
   transition: color var(--dur) var(--ease-out);
+}
+
+/* rótulo curto no celular: "Ana Barbosa" / "Jacinto" (aria-label tem o nome completo) */
+.tabs__tab-extra {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .tabs__tab-extra { display: inline; }
+}
+
+@media (min-width: 640px) {
+  .tabs__list {
+    display: inline-flex;
+    width: max-content;
+    padding: 5px;
+    margin-bottom: 1.75rem;
+  }
+  .tabs__tab {
+    flex: 1 0 auto;
+    padding: .6rem 1.2rem;
+    font-size: .9375rem;
+    white-space: nowrap;
+  }
 }
 
 .tabs__tab:hover {
@@ -355,9 +381,9 @@
 
 .tabs__indicator {
   position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 0;
+  top: 4px;
+  bottom: 4px;
+  left: -1px; /* o JS mede a partir da borda externa da lista (borda de 1px) */
   width: var(--indicator-w);
   border-radius: 999px;
   background: var(--vermelho-btn);
@@ -372,6 +398,10 @@
 }
 .tabs__list:not(.is-ready) .tabs__tab[aria-selected="true"] {
   background: var(--vermelho-btn);
+}
+
+@media (min-width: 640px) {
+  .tabs__indicator { top: 5px; bottom: 5px; }
 }
 
 .tabs__list.is-ready .tabs__indicator {
