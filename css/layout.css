@@ -9,6 +9,7 @@
   z-index: 100;
   height: var(--header-h);
   --shrink: calc(var(--header-h-sm) - var(--header-h)); /* -12px */
+  --header-dur: 250ms;
 }
 
 /* fundo separado para animar só opacity */
@@ -21,7 +22,7 @@
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   opacity: 0;
-  transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+  transition: opacity var(--dur) var(--ease-out), transform var(--header-dur) var(--ease-out);
   pointer-events: none;
 }
 
@@ -44,6 +45,24 @@
 .site-header.is-scrolled::before,
 .menu-open .site-header::before {
   opacity: 1;
+}
+
+/* com mouse em cima (ou foco dentro) o header volta ao tamanho normal.
+   JS liga .is-hovered; só vale em dispositivos com hover real. */
+@media (hover: hover) {
+  .site-header.is-scrolled.is-hovered::before,
+  .site-header.is-scrolled.is-hovered .site-header__logo,
+  .site-header.is-scrolled.is-hovered .site-header__logo img,
+  .site-header.is-scrolled.is-hovered .site-header__toggle,
+  .site-header.is-scrolled.is-hovered .site-header__cta {
+    transform: none;
+  }
+}
+
+@media (hover: hover) and (min-width: 960px) {
+  .site-header.is-scrolled.is-hovered .site-nav {
+    transform: none;
+  }
 }
 
 .is-lite .site-header::before {
@@ -71,14 +90,14 @@
   align-items: center;
   margin-right: auto;
   border-radius: 6px;
-  transition: transform var(--dur) var(--ease-out);
+  transition: transform var(--header-dur) var(--ease-out);
 }
 
 .site-header__logo img {
   width: auto;
   height: 44px;
   transform-origin: left center;
-  transition: transform var(--dur) var(--ease-out);
+  transition: transform var(--header-dur) var(--ease-out);
 }
 
 .site-header.is-scrolled .site-header__logo img {
@@ -101,7 +120,7 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--borda);
   background: var(--grafite);
-  transition: transform var(--dur) var(--ease-out);
+  transition: transform var(--header-dur) var(--ease-out);
 }
 
 .site-header__bar {
@@ -309,13 +328,13 @@
 
   .site-header .site-header__cta {
     display: inline-flex;
-    transition: transform var(--dur) var(--ease-out), background-color var(--dur-fast) linear, box-shadow var(--dur) var(--ease-out);
+    transition: transform var(--header-dur) var(--ease-out), background-color var(--dur-fast) linear, box-shadow var(--dur) var(--ease-out);
   }
 
   .site-header.is-scrolled .site-nav {
     transform: translate3d(0, calc(var(--shrink) / 2), 0);
   }
-  .site-nav { transition: transform var(--dur) var(--ease-out); }
+  .site-nav { transition: transform var(--header-dur) var(--ease-out); }
 }
 
 /* ---------- Seções ---------- */

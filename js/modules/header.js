@@ -1,5 +1,6 @@
 /**
- * header.js — header encolhe ao rolar (.is-scrolled) e menu mobile acessível.
+ * header.js — header encolhe ao rolar (.is-scrolled), volta ao tamanho cheio
+ * com mouse em cima ou foco dentro (.is-hovered) e menu mobile acessível.
  */
 
 import { rafThrottle } from './motion.js';
@@ -21,6 +22,34 @@ function initScrolled(header) {
 
   window.addEventListener('scroll', update, { passive: true });
   update();
+}
+
+/** .is-hovered = mouse sobre o header (só dispositivos com hover) OU foco dentro dele. */
+function initHovered(header) {
+  const canHover = window.matchMedia('(hover: hover)');
+  let pointer = false;
+  let focus = false;
+  const sync = () => header.classList.toggle('is-hovered', pointer || focus);
+
+  header.addEventListener('pointerenter', (e) => {
+    if (e.pointerType !== 'mouse' || !canHover.matches) return; // toque não "gruda" o estado
+    pointer = true;
+    sync();
+  });
+  header.addEventListener('pointerleave', () => {
+    pointer = false;
+    sync();
+  });
+
+  header.addEventListener('focusin', () => {
+    focus = true;
+    sync();
+  });
+  header.addEventListener('focusout', (e) => {
+    if (header.contains(e.relatedTarget)) return; // foco só mudou de item dentro do header
+    focus = false;
+    sync();
+  });
 }
 
 function initMenu(header) {
@@ -91,5 +120,6 @@ export function initHeader() {
   const header = document.querySelector('.site-header');
   if (!header) return;
   initScrolled(header);
+  initHovered(header);
   initMenu(header);
 }

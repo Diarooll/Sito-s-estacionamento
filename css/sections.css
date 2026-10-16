@@ -3,71 +3,163 @@
    ========================================================================== */
 
 /* ==========================================================================
-   HERO
-   Mobile: foto no topo (cantos arredondados), texto abaixo, stats.
-   Desktop (>=960px): a foto ocupa a área toda e o .hero__content vira um
-   "bolso" recortado no canto superior esquerdo: fundo da página por cima do
-   canto da foto + 2 cantos côncavos (pseudo-elementos com radial-gradient).
-   O texto NUNCA fica sobre a foto.
+   HERO — tela cheia
+   Camadas (de trás pra frente): brilho → E gigante (parallax) → faixas de luz
+   → fades (.hero__fade) → texto. O texto fica sempre sobre o fade preto sólido.
    ========================================================================== */
-.hero {
-  --pocket-r: var(--radius-lg);       /* raio dos cantos do bolso */
-  --pocket-gap: clamp(1.25rem, .5rem + 1.6vw, 2.25rem); /* respiro texto↔foto */
+.hero--full {
+  --sym: clamp(420px, 78svh, 860px);   /* tamanho do E gigante */
   position: relative;
-  padding-top: calc(var(--header-h) + 12px);
-  padding-bottom: clamp(3rem, 2rem + 4vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  min-height: max(620px, 100vh);
+  min-height: max(620px, 100svh);
+  padding-top: var(--header-h);
   overflow: hidden;
-}
-
-.hero__inner {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.75rem;
-}
-
-/* ---------- Mídia ---------- */
-.hero__media {
-  position: relative;
-  order: -1;
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--grafite);
   isolation: isolate;
+  background: var(--preto);
 }
 
-.hero__media .media-placeholder {
-  min-height: 0;
-}
-
-/* painel grande do hero: mesmo visual do placeholder, símbolo bem maior */
-.media-placeholder--hero {
+/* ---------- Fundo decorativo ---------- */
+.hero__bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(45% 55% at 50% 50%, rgba(237, 28, 36, .2), transparent 70%),
-    repeating-linear-gradient(-55deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 14px),
-    linear-gradient(160deg, #262626, var(--grafite) 55%, #121212);
+  z-index: 0;
+  pointer-events: none;
 }
 
-.media-placeholder--hero .media-placeholder__icon {
-  width: clamp(160px, 9rem + 12vw, 300px);
-  filter: drop-shadow(0 24px 60px rgba(237, 28, 36, .45));
-  transition: none; /* o parallax atualiza por frame */
+/* brilho vermelho atrás do E */
+.hero__bg::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--header-h) + 12px + var(--sym) / 2);
+  right: calc(var(--sym) * -0.35);
+  width: calc(var(--sym) * 1.5);
+  height: calc(var(--sym) * 1.5);
+  margin-top: calc(var(--sym) * -0.75);
+  background: radial-gradient(closest-side, rgba(237, 28, 36, .22), rgba(237, 28, 36, .06) 55%, transparent);
+}
+
+/* E gigante cortado na borda direita, começa logo abaixo do header; o parallax
+   desce até 160px e a parte de baixo some no fade inferior */
+.hero__symbol {
+  position: absolute;
+  top: calc(var(--header-h) + 12px);
+  right: calc(var(--sym) * -0.3);
+  width: var(--sym);
+  height: var(--sym);
+  max-width: none;
+  opacity: .4;
+  transition: none; /* parallax por frame */
+}
+
+/* ---------- Faixas de luz (faróis) ---------- */
+.hero__beam {
+  --beam-w: 42vw;
+  --beam-dur: 7s;
+  --beam-delay: 0s;
+  position: absolute;
+  left: 0;
+  top: 40%;
+  width: var(--beam-w);
+  z-index: 2; /* acima dos fades: é o elemento vivo da cena */
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(237, 28, 36, .7) 55%, rgba(255, 140, 140, 1));
+  box-shadow: 0 0 10px 1px rgba(237, 28, 36, .45);
+  opacity: 0;
+  transform: translate3d(-100%, 0, 0);
+  animation: hero-beam var(--beam-dur) linear var(--beam-delay) infinite;
+}
+
+/* halo suave em volta da faixa (gradiente, sem filter) */
+.hero__beam::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 64px;
+  margin-top: -32px;
+  background: radial-gradient(55% 50% at 100% 50%, rgba(237, 28, 36, .5), transparent 70%),
+              linear-gradient(90deg, transparent 20%, rgba(237, 28, 36, .14));
+  border-radius: 50%;
+}
+
+.hero__beam--1 { top: 34%; --beam-w: 44vw; --beam-dur: 6.5s; --beam-delay: -1s; }
+.hero__beam--2 { top: 61%; --beam-w: 30vw; --beam-dur: 9s;   --beam-delay: -5s; height: 2px; }
+.hero__beam--3 { top: 79%; --beam-w: 56vw; --beam-dur: 12s;  --beam-delay: -8s; }
+
+@keyframes hero-beam {
+  /* invisível enquanto cruza a coluna do texto; acende na metade direita */
+  0%   { transform: translate3d(-100%, 0, 0); opacity: 0; }
+  30%  { opacity: 0; }
+  42%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { transform: translate3d(calc(100vw + 10%), 0, 0); opacity: 0; }
+}
+
+/* pausa tudo que é infinito quando o hero sai da tela (JS: .is-offscreen) */
+.hero.is-offscreen .hero__beam,
+.hero.is-offscreen .hero__scroll-icon::before {
+  animation-play-state: paused;
+}
+
+/* ---------- Fades ---------- */
+.hero__fade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* véu escuro radial suave sobre o E */
+  background: radial-gradient(70% 80% at 85% 45%, rgba(11, 11, 11, .25), rgba(11, 11, 11, .6));
+}
+
+/* preto sólido à esquerda → transparente à direita (o texto fica no sólido) */
+.hero__fade::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    var(--preto) 0%,
+    var(--preto) 40%,
+    rgba(11, 11, 11, .85) 52%,
+    rgba(11, 11, 11, .4) 62%,
+    transparent 72%);
+}
+
+/* emenda com a seção seguinte */
+.hero__fade::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32%;
+  background: linear-gradient(0deg, var(--preto), rgba(11, 11, 11, .7) 40%, transparent);
 }
 
 /* ---------- Conteúdo ---------- */
-.hero__content {
+.hero__inner {
   position: relative;
-  z-index: 2;
+  z-index: 1;
+  flex: 1;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: clamp(1rem, 3svh, 2rem);
+  padding-top: clamp(1rem, 4svh, 3rem);
+  padding-bottom: clamp(1rem, 3svh, 2rem);
+}
+
+.hero__content {
+  align-self: center;
+  max-width: 780px;
 }
 
 .hero__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: .6rem;
-  margin-bottom: 1.1rem;
+  margin-bottom: clamp(.75rem, 2svh, 1.25rem);
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 700;
@@ -87,23 +179,23 @@
 }
 
 .hero__title {
-  font-size: var(--fs-h1);
-  line-height: .98;
-  letter-spacing: -0.015em;
+  /* cresce com a largura, mas limitado pela altura: tudo cabe em 100svh */
+  font-size: clamp(2.75rem, min(1rem + 5.4vw, 9svh), 6rem);
+  line-height: .94;
+  letter-spacing: -0.02em;
 }
 
 .hero__line {
   display: block;
 }
 
-/* última linha com destaque em vermelho (pouca área, alto impacto) */
-.hero__line:last-child {
+.hero__line--accent {
   color: var(--vermelho);
 }
 
 .hero__text {
-  max-width: 46ch;
-  margin-top: 1.25rem;
+  max-width: 52ch;
+  margin-top: clamp(.9rem, 2.2svh, 1.5rem);
   font-size: var(--fs-lead);
   color: var(--cinza);
 }
@@ -112,113 +204,41 @@
   display: flex;
   flex-wrap: wrap;
   gap: .75rem;
-  margin-top: 1.75rem;
-}
-
-/* ---------- Stats ---------- */
-.hero__stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--borda);
-}
-
-.hero__stats .stat__value {
-  font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
+  margin-top: clamp(1.1rem, 3svh, 2rem);
 }
 
 @media (max-width: 380px) {
   .hero__actions .btn { flex: 1 1 100%; }
 }
 
-/* ---------- Desktop: o bolso ---------- */
-@media (min-width: 960px) {
-  .hero {
-    padding-top: calc(var(--header-h) + 16px);
-  }
+/* ---------- Barra de stats na base ---------- */
+.hero__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--borda);
+}
 
-  .hero__inner {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-template-rows: auto minmax(clamp(160px, 20vw, 300px), 1fr) auto;
-    gap: 0;
-    min-height: min(calc(100svh - var(--header-h) - 16px), 900px);
-  }
+.hero__stats .stat__value {
+  font-size: clamp(1.75rem, min(1.3rem + 2vw, 5.5svh), 2.75rem);
+}
 
-  .hero__media {
-    order: 0;
-    grid-column: 1 / -1;
-    grid-row: 1 / 3;
-    aspect-ratio: auto;
-    min-height: 560px;
-    border-radius: var(--radius-lg);
-  }
+/* ---------- Indicador "role" ---------- */
+.hero__scroll {
+  display: none;
+}
 
-  .hero__content {
-    grid-column: 1 / 8;
-    grid-row: 1;
-    align-self: start;
-    padding: .5rem var(--pocket-gap) var(--pocket-gap) 0;
-    background: var(--preto);
-    border-bottom-right-radius: var(--pocket-r);
-  }
-
-  /* 1px de sobra para cima/esquerda evita "fio" da foto por arredondamento de subpixel */
-  .hero__content {
-    margin: -1px 0 0 -1px;
-    padding-left: 1px;
-  }
-
-  /* cantos côncavos: quadrado R×R preenchido com o fundo, menos um quarto de círculo */
-  .hero__content::before,
-  .hero__content::after {
-    content: "";
-    position: absolute;
-    width: var(--pocket-r);
-    height: var(--pocket-r);
-    background: radial-gradient(circle at 100% 100%, transparent calc(var(--pocket-r) - .5px), var(--preto) var(--pocket-r));
-    pointer-events: none;
-  }
-
-  /* encontro do topo do bolso com a borda superior da foto */
-  .hero__content::before {
-    top: 0;
-    left: 100%;
-  }
-
-  /* encontro da base do bolso com a borda esquerda da foto */
-  .hero__content::after {
-    top: 100%;
-    left: 0;
-  }
-
-  .hero__title {
-    font-size: clamp(3.25rem, 1rem + 4.4vw, 5.5rem);
-  }
-
-  /* símbolo e brilho centralizados na parte visível do painel (à direita do bolso) */
-  .media-placeholder--hero {
-    --pocket-w: calc(7 / 12 * 100%);
-    padding-left: var(--pocket-w);
-    background:
-      radial-gradient(35% 55% at calc(50% + var(--pocket-w) / 2) 50%, rgba(237, 28, 36, .2), transparent 70%),
-      repeating-linear-gradient(-55deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 14px),
-      linear-gradient(160deg, #262626, var(--grafite) 55%, #121212);
-  }
-
+@media (min-width: 640px) {
   .hero__stats {
-    grid-column: 1 / -1;
-    grid-row: 3;
     grid-template-columns: repeat(3, auto);
     justify-content: start;
     gap: 0;
-    margin-top: 2rem;
-    padding-top: 0;
-    border-top: 0;
+    padding-right: 11rem; /* espaço do indicador "role" */
   }
 
   .hero__stats .stat {
-    padding-inline: clamp(1.5rem, .5rem + 3vw, 3.5rem);
+    padding-inline: clamp(1.25rem, .5rem + 3vw, 3.5rem);
   }
 
   .hero__stats .stat:first-child {
@@ -228,11 +248,98 @@
   .hero__stats .stat + .stat {
     border-left: 1px solid var(--borda);
   }
+
+  .hero__scroll {
+    position: absolute;
+    z-index: 2;
+    right: calc(max(0px, (100% - var(--container) - 2 * var(--gutter)) / 2) + var(--gutter));
+    bottom: clamp(1rem, 3svh, 2rem);
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    min-height: 44px;
+    color: var(--cinza);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color var(--dur-fast) linear;
+  }
+
+  .hero__scroll:hover {
+    color: var(--branco);
+  }
 }
 
-@media (min-width: 1200px) {
-  .hero__content { grid-column: 1 / 7; }
-  .media-placeholder--hero { --pocket-w: 50%; }
+/* "mouse" com a bolinha descendo */
+.hero__scroll-icon {
+  position: relative;
+  flex: none;
+  width: 22px;
+  height: 34px;
+  border: 2px solid currentColor;
+  border-radius: 12px;
+}
+
+.hero__scroll-icon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  width: 4px;
+  height: 8px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--vermelho);
+  animation: hero-scroll 1.8s var(--ease-in-out) infinite;
+}
+
+@keyframes hero-scroll {
+  0%   { transform: translate3d(0, 0, 0);    opacity: 0; }
+  25%  { opacity: 1; }
+  80%  { transform: translate3d(0, 12px, 0); opacity: 0; }
+  100% { transform: translate3d(0, 12px, 0); opacity: 0; }
+}
+
+/* ---------- Mobile: E apagado atrás, fade de baixo pra cima ---------- */
+@media (max-width: 959px) {
+  .hero--full {
+    --sym: min(115vw, 64svh);
+  }
+
+  .hero__symbol {
+    top: calc(var(--header-h) - 40px);
+    right: calc(var(--sym) * -0.38);
+    opacity: .2;
+  }
+
+  .hero__bg::before {
+    top: calc(var(--header-h) + var(--sym) / 2 - 40px);
+    opacity: .7;
+  }
+
+  .hero__fade::before {
+    background: linear-gradient(0deg,
+      var(--preto) 0%,
+      var(--preto) 30%,
+      rgba(11, 11, 11, .75) 55%,
+      rgba(11, 11, 11, .2) 85%,
+      transparent 100%);
+  }
+
+  .hero__fade::after {
+    display: none;
+  }
+
+  /* faixas só na metade de cima (área do E), longe do texto */
+  .hero__beam--1 { top: 16%; }
+  .hero__beam--2 { top: 27%; }
+  .hero__beam--3 { top: 38%; }
+
+  .hero__content {
+    align-self: end;
+  }
 }
 
 /* ==========================================================================
