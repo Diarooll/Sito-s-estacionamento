@@ -33,11 +33,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira:ital,wght@1,700;1,800&display=swap">
 
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/sections.css">
-  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/base.css?v=202610161810">
+  <link rel="stylesheet" href="css/layout.css?v=202610161810">
+  <link rel="stylesheet" href="css/components.css?v=202610161810">
+  <link rel="stylesheet" href="css/sections.css?v=202610161810">
+  <link rel="stylesheet" href="css/animations.css?v=202610161810">
 
 
   <script type="application/ld+json">
@@ -414,6 +414,24 @@
     </div>
   </footer>
 
-  <script type="module" src="js/main.js"></script>
+  <!-- Versão dos arquivos: força o navegador a baixar CSS/JS novos a cada atualização
+       (rode scripts/versao.sh antes de publicar). -->
+  <script type="importmap">
+  {
+    "imports": {
+      "./js/modules/cards.js": "./js/modules/cards.js?v=202610161810",
+      "./js/modules/counters.js": "./js/modules/counters.js?v=202610161810",
+      "./js/modules/header.js": "./js/modules/header.js?v=202610161810",
+      "./js/modules/hero.js": "./js/modules/hero.js?v=202610161810",
+      "./js/modules/hours.js": "./js/modules/hours.js?v=202610161810",
+      "./js/modules/maps.js": "./js/modules/maps.js?v=202610161810",
+      "./js/modules/motion.js": "./js/modules/motion.js?v=202610161810",
+      "./js/modules/reveal.js": "./js/modules/reveal.js?v=202610161810",
+      "./js/modules/scrollspy.js": "./js/modules/scrollspy.js?v=202610161810",
+      "./js/modules/tabs.js": "./js/modules/tabs.js?v=202610161810"
+    }
+  }
+  </script>
+  <script type="module" src="js/main.js?v=202610161810"></script>
 </body>
 </html>
