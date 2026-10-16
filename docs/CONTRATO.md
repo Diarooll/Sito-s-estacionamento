@@ -14,8 +14,8 @@ nome de classe, atributo ou variável, procure aqui. Se precisar de algo novo ou
 Assets prontos (não alterar): `assets/logo/logo.svg` (logo transparente, proporção ~2.6:1),
 `assets/logo/simbolo-e.svg` (círculo vermelho + E, quadrado), `assets/icons/favicon.svg`,
 `assets/icons/favicon-32.png`, `assets/icons/apple-touch-icon.png`,
-`assets/img/interior-ana-barbosa.webp` + `.jpg` (1206×677, interior coberto da Un. 1).
-**Não existe foto da Un. 2** → usar `.media-placeholder` (ver abaixo).
+`assets/img/og.jpg` (1200×630, imagem de compartilhamento com a logo).
+**O site não usa fotos** (decisão do cliente na revisão 2) → toda área de mídia usa `.media-placeholder` (ver abaixo).
 
 ## Objetivo
 Landing page escura, **dinâmica e que desperte interesse**, com muitas animações suaves —
@@ -198,3 +198,7 @@ footer.site-footer
 - [CSS] Revisão 1: seção Horário centralizada (cabeçalho e `div.hours`) — evita o vazio à direita.
 - [CSS] Revisão 1: no rodapé, os spans de `.site-footer__hours` ficam empilhados com nowrap. Do 640px em diante, © e "Voltar ao topo" dividem uma área `bottom`, com uma linha contínua (`.container::before`) no lugar de duas bordas separadas.
 - [CSS+JS] Revisão 1: o reveal.js adiciona `.is-revealed` (e remove `--reveal-delay`) quando o reveal termina. O CSS zera `transition-delay` e usa transição curta no transform do card, então o tilt volta sem atraso.
+- [JS] Parallax (revisão 2, símbolo E no `.media-placeholder--hero`): mede o elemento pai e limita a ±4% da altura dele; remede após `document.fonts.ready` e após a entrada do `[data-hero="media"]` (evento `hero:shown`) — a 1ª medição era feita com o bloco em scale(.96) do WAAPI.
+- [HTML] Revisão 2: todas as fotos saíram (cliente). Hero: `.hero__media > .media-placeholder.media-placeholder--hero > img.media-placeholder__icon[data-parallax="0.12"]` (300×300, sem label/glyph, sem picture/`.hero__img`/fetchpriority). Card Rotativo e Un. 1 viram `.media-placeholder` (glyph relógio / pin); Un. 1 e Un. 2 com glyph de pin e rótulos "Unidade Ana Barbosa"/"Unidade Jacinto" (sem "Foto em breve"). og:image e JSON-LD image → `assets/img/og.jpg` (1200×630). Nenhuma referência a `interior-ana-barbosa` no index.html — markup combinado com o CSS.
+- [CSS] Revisão 2: as fotos saíram. `.media-placeholder--hero` ocupa exatamente a área da antiga foto (`position:absolute; inset:0` dentro de `.hero__media`, mesmos cantos e mesmo bolso). Símbolo com clamp(160px, 9rem + 12vw, 300px), brilho radial vermelho e drop-shadow. No desktop, `padding-left: --pocket-w` (7/12 e 50% a partir de 1200px) centraliza o símbolo na parte visível, à direita do bolso.
+- [CSS] Revisão 2: `[data-parallax]` agora é só `translate3d(0, var(--parallax-y), 0)`, sem scale(1.08). O símbolo do hero fica com `transition:none` para o parallax não "arrastar". Removidos os estilos órfãos de foto (`.hero__img`, `.hero__media picture`, `.hero__media::after`, `.card__media > img`, `.unit__media > img`). As alturas de card e unidade não mudam, porque vêm do aspect-ratio da mídia.

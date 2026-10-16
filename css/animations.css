@@ -60,7 +60,7 @@
 
 /* ---------- Parallax ---------- */
 [data-parallax] {
-  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.08);
+  transform: translate3d(0, var(--parallax-y, 0px), 0);
 }
 
 /* ==========================================================================
@@ -91,8 +91,6 @@
   display: none;
 }
 
-.is-reduced .card__media > img,
-.is-reduced .unit__media > img,
 .is-reduced .media-placeholder__icon {
   transform: none !important;
 }
@@ -174,8 +172,6 @@
     transform: none !important;
   }
 
-  .card__media > img,
-  .unit__media > img,
   .media-placeholder__icon {
     transform: none !important;
   }

@@ -65,6 +65,7 @@ function playEntrance() {
     const finish = () => {
       el.classList.add('is-shown'); // classe antes do cancel: sem "piscar"
       anim.cancel();
+      el.dispatchEvent(new CustomEvent('hero:shown', { bubbles: true }));
     };
     anim.finished.then(finish, finish);
   });
@@ -103,7 +104,7 @@ function initParallax() {
     items.forEach((item) => {
       if (!item.visible) return;
       const offset = (center - (item.top + item.height / 2)) * item.factor;
-      const limit = item.height * 0.04; // a imagem tem scale(1.08): 4% de folga por lado
+      const limit = item.height * 0.04; // deslocamento sutil: até 4% da altura do contêiner
       const y = Math.max(-limit, Math.min(limit, offset));
       item.el.style.setProperty('--parallax-y', `${y.toFixed(1)}px`);
     });
@@ -132,6 +133,13 @@ function initParallax() {
     window.addEventListener('resize', onResize, { passive: true });
     window.addEventListener('load', onResize, { once: true }); // fontes/imagens mudam medidas
   };
+
+  // Remede quando as fontes chegam e quando o bloco de mídia termina a entrada
+  // (durante o WAAPI ele está em scale(.96), o que distorce a 1ª medição).
+  document.fonts?.ready.then(() => active && onResize());
+  document.addEventListener('hero:shown', (e) => {
+    if (active && e.target.dataset.hero === 'media') onResize();
+  });
 
   const stop = () => {
     if (!active) return;
