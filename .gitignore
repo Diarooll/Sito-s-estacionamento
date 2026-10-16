@@ -1,0 +1,20 @@
+# fontes originais / arquivos brutos (versões otimizadas ficam em assets/)
+fotoLogo/
+fotoEstacionamento/
+demo-cores/
+
+# sistema/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Claude Code local
+.claude/settings.local.json
+
+# deploy/segredos
+.netlify/
+.env
+.env.*
+node_modules/
