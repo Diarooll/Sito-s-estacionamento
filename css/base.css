@@ -1,0 +1,255 @@
+/* ==========================================================================
+   base.css — tokens, reset, tipografia, utilitários
+   Sito's Estacionamentos
+   ========================================================================== */
+
+:root {
+  /* Cores */
+  --preto: #0B0B0B;
+  --grafite: #1A1A1A;
+  --grafite-2: #222;
+  --borda: #2A2A2A;
+  --branco: #FFFFFF;
+  --cinza: #B3B3B3;
+  --vermelho: #ED1C24;
+  --vermelho-btn: #D4141B;
+  --vermelho-hover: #E0171F;
+  --verde: #2BD46B;
+
+  /* Tipografia */
+  --font-display: "Saira", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --fs-sm: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
+  --fs-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --fs-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --fs-h3: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+  --fs-h2: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+  --fs-h1: clamp(2.6rem, 1.6rem + 4.6vw, 5.25rem);
+  --fs-price: clamp(2rem, 1.6rem + 1.8vw, 2.75rem);
+
+  /* Raios */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 28px;
+
+  /* Movimento */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --dur-fast: 180ms;
+  --dur: 450ms;
+  --dur-slow: 800ms;
+
+  /* Layout */
+  --header-h: 72px;
+  --header-h-sm: 60px;
+  --gutter: 16px;
+  --container: 1200px;
+  --section-y: clamp(4.5rem, 3rem + 6vw, 8rem);
+
+  --shadow: 0 20px 50px -20px rgba(0, 0, 0, .8);
+  --ring: 0 0 0 3px var(--preto), 0 0 0 5px var(--vermelho);
+
+  color-scheme: dark;
+}
+
+@media (min-width: 640px) {
+  :root { --gutter: 24px; }
+}
+@media (min-width: 1200px) {
+  :root { --gutter: 32px; }
+}
+
+/* ---------- Reset moderno ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h-sm) + 12px);
+  background: var(--preto);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--preto);
+  color: var(--branco);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+@supports (overflow: clip) {
+  body { overflow-x: clip; }
+}
+
+.menu-open body {
+  overflow: hidden;
+}
+
+img,
+picture,
+svg,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+
+ul[class],
+ol[class] {
+  list-style: none;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+address {
+  font-style: normal;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+li,
+dd,
+dt {
+  overflow-wrap: break-word;
+}
+
+::selection {
+  background: var(--vermelho);
+  color: var(--branco);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- Tipografia ---------- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+
+p {
+  text-wrap: pretty;
+}
+
+strong {
+  font-weight: 600;
+}
+
+/* ---------- Foco visível ---------- */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--vermelho);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- Utilitários ---------- */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  padding: .75rem 1rem;
+  background: var(--vermelho-btn);
+  color: var(--branco);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+}
+
+/* seções focadas programaticamente pelo scroll suave (JS) não mostram contorno */
+[tabindex="-1"]:focus,
+[tabindex="-1"]:focus-visible {
+  outline: none;
+}

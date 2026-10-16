@@ -51,8 +51,8 @@ URLs:
 - Mapa Un.2: `https://www.google.com/maps?q=R.+Jacinto,+57+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ,+20725-020&output=embed`
 - Rota Un.1: `https://www.google.com/maps/dir/?api=1&destination=R.+Ana+Barbosa,+44+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ`
 - Rota Un.2: `https://www.google.com/maps/dir/?api=1&destination=R.+Jacinto,+57+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ`
-- 360° Un.1: `https://www.google.com/maps/embed?pb=!4v1!6m8!1m7!1sCIHM0ogKEICAgIC1j6XKxwE!2m2!1d-22.9006456!2d-43.2816968!3f0!4f0!5f0.7820865974627469`
-- 360° Un.2: `https://www.google.com/maps/embed?pb=!4v1!6m8!1m7!1sCIHM0ogKEICAgIDE5dHvkQE!2m2!1d-22.9035429!2d-43.2814071!3f90!4f0!5f0.7820865974627469`
+- 360° Un.1: `https://www.google.com/maps/embed?pb=!4v1!6m8!1m7!1sD1BftDe1TRQwd22ZzLyq9Q!2m2!1d-22.9008164!2d-43.281611!3f61.08!4f0!5f0.7820865974627469`
+- 360° Un.2: `https://www.google.com/maps/embed?pb=!4v1!6m8!1m7!1sQs2sHYKmd-HCLvxGI0vaTg!2m2!1d-22.9034313!2d-43.2814623!3f158.85!4f0!5f0.7820865974627469`
 
 ## Design tokens (definidos em `css/base.css`, `:root`)
 ```
@@ -161,8 +161,40 @@ footer.site-footer
 - `will-change` só durante a animação.
 - Animações infinitas (ponto pulsante, skeleton) pausam fora da tela ou são baratas.
 - `prefers-reduced-motion` NÃO desliga tudo: vira `is-reduced` (fades curtos).
-- Detecção de lite em `js/modules/motion.js`: `hardwareConcurrency <= 4` || `deviceMemory <= 4` || FPS medido < 45 no 1º segundo.
+- Detecção de lite em `js/modules/motion.js`: `hardwareConcurrency <= 2` || `deviceMemory <= 2` || FPS medido < 45 no 1º segundo (o FPS é o critério principal).
 
 ## Log de decisões
 (cada agente adiciona: `- [AGENTE] decisão — motivo`)
 - [ORQUESTRADOR] Contrato inicial criado.
+- [HTML] `a.skip-link[href="#conteudo"]` no início do body + `main#conteudo` — acessibilidade (pular navegação).
+- [HTML] `<script type="module" src="js/main.js">` no fim do body — pedido do Agente JS.
+- [HTML] Placeholder: `img.media-placeholder__icon` (simbolo-e) + `svg.media-placeholder__glyph` decorativo opcional (cards 2 e 3) — pedido do CSS / ícones dos serviços.
+- [HTML] Abas com ids `tab-<data-tab>` e painéis `panel-<data-tab>` (aria-controls/aria-labelledby); aba ativa já com `.is-active` — ligação ARIA.
+- [HTML] `dl.hours__list > div.hours__item > dt + dd`; `.hours__status` com texto padrão do horário — fallback sem JS.
+- [HTML] Footer: `.site-footer__logo`, `__tagline`, `__units > address.site-footer__address`, `__hours`, `__copy`, `__top` — nomear os elementos do rodapé.
+- [JS] main.js carrega cada módulo com `import()` dinâmico dentro de try/catch — um arquivo com erro/404 não derruba os outros (import estático quebraria o grafo inteiro). `is-ready` entra depois que todos tentaram iniciar.
+- [JS] `is-lite` pode ser adicionada até ~1s após o load (medição de FPS); módulos assinam `onChange()` do motion.js e desligam tilt/parallax na hora.
+- [JS] `.tabs__list.is-ready` adicionada após o 1º posicionamento do indicador — CSS só liga a transição do indicador com ela (sem "deslize" no load). Combinado com o CSS.
+- [JS] Hero: WAAPI com `fill: both`; ao terminar adiciona `.is-shown` e cancela a animação. Sem transition de opacity/transform em `[data-hero]` no CSS. Dispara evento `hero:enter` (e `data-hero-entered`) quando cada item começa a entrar — contadores do hero esperam por ele.
+- [JS] Contadores: com IO disponível, o texto vira `prefixo + 0 + sufixo` na inicialização e termina exatamente no texto original do HTML.
+- [JS] Scroll suave vale para todo `a[href^="#"]` (inclui skip-link e "Voltar ao topo"); move o foco para o alvo (`tabindex="-1"` se preciso) e faz `pushState`. Link ativo ganha também `aria-current="location"`.
+- [JS] Módulo extra `hours.js` (não estava no plano de módulos): status aberto/fechado em America/Sao_Paulo via Intl, atualiza na virada de cada minuto e ao voltar para a aba.
+- [JS] Tilt: `--tilt-x/-y` voltam a `0deg` no pointerleave (CSS faz a transição de volta fora de `.is-tilting`).
+- [CSS] Tokens extras em base.css: `--vermelho-hover:#E0171F`, `--verde:#2BD46B` (ponto "aberto"), `--header-h-sm:60px`, `--gutter` (16/24/32px), escala `--fs-*` com clamp — evitar números mágicos.
+- [CSS] Header "encolhe" só com transform (fundo `::before` sobe 12px, logo/toggle/CTA sobem 6px), sem animar height — regra "só transform/opacity". Nunca pôr transform em `.site-header__inner`/`.site-header` (o `.site-nav` mobile é `position:fixed` dentro deles).
+- [CSS] Sem JS (`.no-js`) ou JS travado (`.anim-fallback:not(.is-ready)`): header vira absoluto e o menu vira linha simples de links (botão escondido), para a navegação nunca depender do JS.
+- [CSS] Hero desktop: grid de 12 col; `.hero__media` ocupa linhas 1–2 inteiras, `.hero__content` fica na linha 1 (col 1–7) com fundo `--preto` + `border-bottom-right-radius` e dois cantos côncavos via `::before/::after` (radial-gradient). Sem wrapper extra. Stats na linha 3, abaixo da foto.
+- [CSS] Abas: `.tabs__list:not(.is-ready)` pinta a aba `[aria-selected=true]` direto (indicador oculto) — sem JS a aba ativa continua visível; transição do indicador só com `.is-ready`.
+- [CSS] `.price-table__row--promo th::after` gera o selo "Promo" (conteúdo decorativo; o texto "Promoção" já está no th).
+- [CSS] Bloco interno do horário estilizado como `div.hours` (a section `.hours#horario` não recebe estilo próprio), conforme orquestrador.
+- [CSS] `[tabindex="-1"]:focus{outline:none}` para as seções focadas pelo scroll suave do JS.
+- [JS] Lite: critério estático baixado para `hardwareConcurrency <= 2` / `deviceMemory <= 2` (revisão 1 com o cliente) — 4 núcleos é comum hoje; o FPS medido decide de verdade.
+- [JS] Reveal: ao terminar (transitionend do próprio elemento ou timeout delay + 1200ms), remove o `--reveal-delay` inline e adiciona `.is-revealed`; CSS zera o transition-delay com ela — o tilt/hover dos cards não herdam mais o atraso da cascata.
+- [HTML] Revisão 1: embeds 360° trocados pelas fotos oficiais do Street View enviadas pelo cliente (seção URLs atualizada) — pedido do cliente.
+- [HTML] Revisão 1: `.card__price` agora tem `span.card__price-label` ("a partir de"/"diária") + `span.card__price-value` (com `<small>/mês</small>` no mensalista) — o preço competia com o título e "R$ 400/mês" quebrava; nomes combinados com o CSS.
+- [HTML] Revisão 1: `p.site-footer__hours` com cada intervalo em `<span>` (sem "·") — pedido do CSS para empilhar em linhas com nowrap.
+- [CSS] Revisão 1: removida a faixa diagonal vermelha da foto do hero (fica só o degradê escuro embaixo) — pedido do cliente.
+- [CSS] Revisão 1: preço dos cards vai para o rodapé do card (order + margin-top:auto + linha divisória), na ordem título → nota → preço. `.card__price-label` em Inter pequeno e cinza, `.card__price-value` em Saira com nowrap e `small` em 0.5em cinza — hierarquia clara e sem vão vazio.
+- [CSS] Revisão 1: seção Horário centralizada (cabeçalho e `div.hours`) — evita o vazio à direita.
+- [CSS] Revisão 1: no rodapé, os spans de `.site-footer__hours` ficam empilhados com nowrap. Do 640px em diante, © e "Voltar ao topo" dividem uma área `bottom`, com uma linha contínua (`.container::before`) no lugar de duas bordas separadas.
+- [CSS+JS] Revisão 1: o reveal.js adiciona `.is-revealed` (e remove `--reveal-delay`) quando o reveal termina. O CSS zera `transition-delay` e usa transição curta no transform do card, então o tilt volta sem atraso.

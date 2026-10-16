@@ -1,0 +1,190 @@
+/* ==========================================================================
+   animations.css — reveals, hero, parallax, modos reduced / lite / fallback
+   Regras: só transform/opacity; estados escondidos só existem sob .js;
+   prefers-reduced-motion NÃO desliga tudo (vira fades/escala curtos).
+   ========================================================================== */
+
+/* ---------- Reveal ao rolar ---------- */
+.js [data-reveal] {
+  --reveal-x: 0px;
+  --reveal-y: 32px;
+  --reveal-s: 1;
+  opacity: 0;
+  transform: translate3d(var(--reveal-x), var(--reveal-y), 0) scale(var(--reveal-s));
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js [data-reveal="up"]    { --reveal-y: 32px; }
+.js [data-reveal="fade"]  { --reveal-y: 0px; }
+.js [data-reveal="left"]  { --reveal-x: -40px; --reveal-y: 0px; }
+.js [data-reveal="right"] { --reveal-x: 40px;  --reveal-y: 0px; }
+.js [data-reveal="scale"] { --reveal-y: 0px;   --reveal-s: .94; }
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* cards com tilt: depois de revelados o transform volta a ser o do tilt
+   (components.css), com transição curta para o retorno suave */
+.js .card[data-reveal].is-visible {
+  transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+}
+
+/* reveal terminou (JS adiciona .is-revealed e remove --reveal-delay):
+   hover/tilt voltam sem atraso e com transição curta */
+.js [data-reveal].is-revealed {
+  transition-delay: 0ms;
+}
+
+.js .card[data-reveal].is-revealed {
+  transition: transform var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out), border-color var(--dur) linear;
+}
+
+.js .card[data-reveal].is-visible.is-tilting {
+  transition: opacity var(--dur-slow) var(--ease-out), border-color var(--dur) linear;
+  transition-delay: 0ms;
+}
+
+/* ---------- Hero (entrada via WAAPI no JS; CSS só define início/fim) ---------- */
+.js [data-hero] {
+  opacity: 0;
+}
+
+.js [data-hero].is-shown {
+  opacity: 1;
+}
+
+/* ---------- Parallax ---------- */
+[data-parallax] {
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.08);
+}
+
+/* ==========================================================================
+   .is-reduced — movimento reduzido: mantém animação, só fade/escala curtos
+   ========================================================================== */
+.is-reduced [data-reveal] {
+  --reveal-x: 0px !important;
+  --reveal-y: 0px !important;
+  --reveal-s: .985 !important;
+  transition-duration: var(--dur), var(--dur);
+}
+
+.is-reduced [data-parallax] {
+  transform: none;
+}
+
+.is-reduced .card,
+.js.is-reduced .card[data-reveal].is-visible {
+  transform: none;
+}
+
+.is-reduced .site-nav,
+.is-reduced .site-nav__list > li {
+  transform: none !important;
+}
+
+.is-reduced .btn--primary::after {
+  display: none;
+}
+
+.is-reduced .card__media > img,
+.is-reduced .unit__media > img,
+.is-reduced .media-placeholder__icon {
+  transform: none !important;
+}
+
+.is-reduced .hours__status::after {
+  animation-duration: 3s;
+}
+
+/* ==========================================================================
+   .is-lite — hardware fraco: mantém reveals/contadores/abas/hero;
+   sem tilt, sem parallax, sem backdrop-filter.
+   (pode chegar ~1,2s depois do load, então nada aqui "pula")
+   ========================================================================== */
+.is-lite [data-parallax] {
+  transform: none;
+}
+
+.is-lite .card,
+.js.is-lite .card[data-reveal].is-visible {
+  transform: none;
+}
+
+.is-lite .card::before {
+  display: none;
+}
+
+.is-lite [data-reveal] {
+  --reveal-y: 20px;
+}
+.is-lite [data-reveal="left"]  { --reveal-x: -24px; --reveal-y: 0px; }
+.is-lite [data-reveal="right"] { --reveal-x: 24px;  --reveal-y: 0px; }
+.is-lite [data-reveal="fade"],
+.is-lite [data-reveal="scale"] { --reveal-y: 0px; }
+
+.is-lite * {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* ==========================================================================
+   .anim-fallback — o JS não iniciou em 3s: tudo visível, sem animação
+   ========================================================================== */
+.anim-fallback [data-reveal],
+.anim-fallback [data-hero] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.anim-fallback .card {
+  transform: none !important;
+}
+
+/* ==========================================================================
+   prefers-reduced-motion — mesma regra do .is-reduced, mesmo antes do JS
+   (não desliga as animações, só remove deslocamentos/loops longos)
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    --reveal-x: 0px !important;
+    --reveal-y: 0px !important;
+    --reveal-s: .985 !important;
+    transition-duration: var(--dur), var(--dur);
+  }
+
+  [data-parallax],
+  .card,
+  .js .card[data-reveal].is-visible {
+    transform: none;
+  }
+
+  .card::before,
+  .btn--primary::after {
+    display: none;
+  }
+
+  .site-nav,
+  .js .site-nav__list > li {
+    transform: none !important;
+  }
+
+  .card__media > img,
+  .unit__media > img,
+  .media-placeholder__icon {
+    transform: none !important;
+  }
+
+  .embed::before {
+    animation-duration: 2.4s;
+  }
+
+  .hours__status::after {
+    animation-duration: 3s;
+  }
+}

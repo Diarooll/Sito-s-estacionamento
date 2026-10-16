@@ -1,0 +1,430 @@
+/* ==========================================================================
+   sections.css — hero, serviços, preços, unidades, tour, horário
+   ========================================================================== */
+
+/* ==========================================================================
+   HERO
+   Mobile: foto no topo (cantos arredondados), texto abaixo, stats.
+   Desktop (>=960px): a foto ocupa a área toda e o .hero__content vira um
+   "bolso" recortado no canto superior esquerdo: fundo da página por cima do
+   canto da foto + 2 cantos côncavos (pseudo-elementos com radial-gradient).
+   O texto NUNCA fica sobre a foto.
+   ========================================================================== */
+.hero {
+  --pocket-r: var(--radius-lg);       /* raio dos cantos do bolso */
+  --pocket-gap: clamp(1.25rem, .5rem + 1.6vw, 2.25rem); /* respiro texto↔foto */
+  position: relative;
+  padding-top: calc(var(--header-h) + 12px);
+  padding-bottom: clamp(3rem, 2rem + 4vw, 5rem);
+  overflow: hidden;
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+}
+
+/* ---------- Mídia ---------- */
+.hero__media {
+  position: relative;
+  order: -1;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--grafite);
+  isolation: isolate;
+}
+
+.hero__media picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 55%;
+  /* transform do parallax: animations.css ([data-parallax]) */
+}
+
+/* vinheta escura embaixo (decorativo) */
+.hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 55%, rgba(11, 11, 11, .55));
+  pointer-events: none;
+}
+
+/* ---------- Conteúdo ---------- */
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: 1.1rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.hero__eyebrow::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--vermelho);
+  box-shadow: 0 0 0 4px rgba(237, 28, 36, .2);
+}
+
+.hero__title {
+  font-size: var(--fs-h1);
+  line-height: .98;
+  letter-spacing: -0.015em;
+}
+
+.hero__line {
+  display: block;
+}
+
+/* última linha com destaque em vermelho (pouca área, alto impacto) */
+.hero__line:last-child {
+  color: var(--vermelho);
+}
+
+.hero__text {
+  max-width: 46ch;
+  margin-top: 1.25rem;
+  font-size: var(--fs-lead);
+  color: var(--cinza);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: 1.75rem;
+}
+
+/* ---------- Stats ---------- */
+.hero__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--borda);
+}
+
+.hero__stats .stat__value {
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 3rem);
+}
+
+@media (max-width: 380px) {
+  .hero__actions .btn { flex: 1 1 100%; }
+}
+
+/* ---------- Desktop: o bolso ---------- */
+@media (min-width: 960px) {
+  .hero {
+    padding-top: calc(var(--header-h) + 16px);
+  }
+
+  .hero__inner {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto minmax(clamp(160px, 20vw, 300px), 1fr) auto;
+    gap: 0;
+    min-height: min(calc(100svh - var(--header-h) - 16px), 900px);
+  }
+
+  .hero__media {
+    order: 0;
+    grid-column: 1 / -1;
+    grid-row: 1 / 3;
+    aspect-ratio: auto;
+    min-height: 560px;
+    border-radius: var(--radius-lg);
+  }
+
+  .hero__content {
+    grid-column: 1 / 8;
+    grid-row: 1;
+    align-self: start;
+    padding: .5rem var(--pocket-gap) var(--pocket-gap) 0;
+    background: var(--preto);
+    border-bottom-right-radius: var(--pocket-r);
+  }
+
+  /* 1px de sobra para cima/esquerda evita "fio" da foto por arredondamento de subpixel */
+  .hero__content {
+    margin: -1px 0 0 -1px;
+    padding-left: 1px;
+  }
+
+  /* cantos côncavos: quadrado R×R preenchido com o fundo, menos um quarto de círculo */
+  .hero__content::before,
+  .hero__content::after {
+    content: "";
+    position: absolute;
+    width: var(--pocket-r);
+    height: var(--pocket-r);
+    background: radial-gradient(circle at 100% 100%, transparent calc(var(--pocket-r) - .5px), var(--preto) var(--pocket-r));
+    pointer-events: none;
+  }
+
+  /* encontro do topo do bolso com a borda superior da foto */
+  .hero__content::before {
+    top: 0;
+    left: 100%;
+  }
+
+  /* encontro da base do bolso com a borda esquerda da foto */
+  .hero__content::after {
+    top: 100%;
+    left: 0;
+  }
+
+  .hero__title {
+    font-size: clamp(3.25rem, 1rem + 4.4vw, 5.5rem);
+  }
+
+  .hero__stats {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 0;
+    margin-top: 2rem;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .hero__stats .stat {
+    padding-inline: clamp(1.5rem, .5rem + 3vw, 3.5rem);
+  }
+
+  .hero__stats .stat:first-child {
+    padding-left: 0;
+  }
+
+  .hero__stats .stat + .stat {
+    border-left: 1px solid var(--borda);
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero__content { grid-column: 1 / 7; }
+}
+
+/* ==========================================================================
+   SERVIÇOS
+   ========================================================================== */
+.services .card__media {
+  aspect-ratio: 16 / 10;
+}
+
+/* ==========================================================================
+   PREÇOS
+   ========================================================================== */
+.pricing .tabs {
+  max-width: 760px;
+}
+
+.pricing__notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  max-width: 760px;
+  margin-top: 1.5rem;
+}
+
+.pricing__notes li {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .5rem .95rem;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--grafite);
+  font-size: var(--fs-sm);
+  color: var(--cinza);
+}
+
+.pricing__notes li::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vermelho);
+}
+
+@media (min-width: 1200px) {
+  /* tabela à esquerda, notas à direita em telas largas */
+  .pricing .container {
+    display: grid;
+    grid-template-columns: minmax(0, 760px) minmax(0, 1fr);
+    column-gap: 3rem;
+    align-items: start;
+  }
+  .pricing .section__head { grid-column: 1 / -1; }
+  .pricing__notes {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: calc(44px + 10px + 1.75rem);
+  }
+}
+
+/* ==========================================================================
+   UNIDADES
+   ========================================================================== */
+.unit {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-lg);
+  background: var(--grafite);
+  overflow: hidden;
+  transition: border-color var(--dur) linear;
+}
+
+.unit:hover {
+  border-color: #3a3a3a;
+}
+
+.unit__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--grafite-2);
+}
+
+.unit__media > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.unit:hover .unit__media > img {
+  transform: scale(1.04);
+}
+
+.unit__body {
+  display: grid;
+  justify-items: start;
+  gap: .75rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+}
+
+.unit__title {
+  font-size: var(--fs-h3);
+}
+
+.unit__address {
+  color: var(--cinza);
+  line-height: 1.6;
+}
+
+.unit__body .btn {
+  margin-top: .5rem;
+}
+
+.unit__map {
+  margin: 0 1.5rem 1.5rem;
+  aspect-ratio: 16 / 10;
+}
+
+/* ==========================================================================
+   TOUR 360°
+   ========================================================================== */
+.tour .embed--wide {
+  box-shadow: var(--shadow);
+}
+
+/* ==========================================================================
+   HORÁRIO  (div.hours = bloco interno; a section é #horario)
+   ========================================================================== */
+/* horário centralizado (cabeçalho + bloco) para não sobrar vazio à direita */
+#horario .section__head {
+  margin-inline: auto;
+  text-align: center;
+}
+
+#horario .section__lead {
+  margin-inline: auto;
+}
+
+div.hours {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 760px;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  border: 1px solid var(--borda);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(70% 120% at 100% 0%, rgba(237, 28, 36, .08), transparent 60%),
+    var(--grafite);
+}
+
+.hours__status {
+  justify-self: center;
+}
+
+.hours__list {
+  display: grid;
+  gap: 0;
+}
+
+.hours__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .25rem 1rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--borda);
+}
+
+.hours__item dt {
+  color: var(--cinza);
+  font-weight: 500;
+}
+
+.hours__item dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 640px) {
+  .hours__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .hours__item {
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 1.25rem 1.25rem 1.4rem;
+    border: 1px solid var(--borda);
+    border-radius: var(--radius);
+    background: var(--grafite-2);
+  }
+}
