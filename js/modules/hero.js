@@ -1,11 +1,14 @@
 /**
- * hero.js — entrada sequencial do hero (Web Animations API) e parallax da foto.
+ * hero.js — entrada sequencial do hero (Web Animations API), parallax do
+ * símbolo e pausa das animações do hero quando ele sai da tela.
  *
  * Entrada: cada [data-hero] anima em ordem; ao terminar recebe .is-shown e a
  * animação é cancelada (o CSS assume o estado final). Roda em todos os modos,
  * só fica mais curta/sem deslocamento em is-reduced.
  * Parallax: [data-parallax="fator"] recebe --parallax-y (px) enquanto visível,
+ * limitado por [data-parallax-max="px"] (padrão: 4% da altura do pai);
  * desligado em is-reduced/is-lite.
+ * Fora da tela: .hero.is-offscreen (o CSS pausa as faixas de luz).
  */
 
 import { allowsRichMotion, dur, isReduced, onChange, rafThrottle, EASE_OUT } from './motion.js';
@@ -16,10 +19,12 @@ const STEP = 110;
 
 function keyframesFor(el) {
   const reduced = isReduced();
+  // Camada de fundo do tamanho do hero: entra de um pouco maior para o normal
+  // (escala > 1 não revela bordas; o hero tem overflow hidden).
   if (el.dataset.hero === 'media') {
     return reduced
-      ? [{ opacity: 0, transform: 'scale(.99)' }, { opacity: 1, transform: 'none' }]
-      : [{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }];
+      ? [{ opacity: 0, transform: 'scale(1.01)' }, { opacity: 1, transform: 'none' }]
+      : [{ opacity: 0, transform: 'scale(1.05)' }, { opacity: 1, transform: 'none' }];
   }
   return reduced
     ? [{ opacity: 0 }, { opacity: 1 }]
@@ -77,6 +82,7 @@ function initParallax() {
   const items = [...document.querySelectorAll('[data-parallax]')].map((el) => ({
     el,
     factor: parseFloat(el.dataset.parallax) || 0.1,
+    max: parseFloat(el.dataset.parallaxMax) || 0, // 0 = usa 4% da altura do pai
     top: 0,
     height: 0,
     visible: false,
@@ -104,7 +110,7 @@ function initParallax() {
     items.forEach((item) => {
       if (!item.visible) return;
       const offset = (center - (item.top + item.height / 2)) * item.factor;
-      const limit = item.height * 0.04; // deslocamento sutil: até 4% da altura do contêiner
+      const limit = item.max || item.height * 0.04;
       const y = Math.max(-limit, Math.min(limit, offset));
       item.el.style.setProperty('--parallax-y', `${y.toFixed(1)}px`);
     });
@@ -135,7 +141,7 @@ function initParallax() {
   };
 
   // Remede quando as fontes chegam e quando o bloco de mídia termina a entrada
-  // (durante o WAAPI ele está em scale(.96), o que distorce a 1ª medição).
+  // (durante o WAAPI ele está escalado, o que distorce a 1ª medição).
   document.fonts?.ready.then(() => active && onResize());
   document.addEventListener('hero:shown', (e) => {
     if (active && e.target.dataset.hero === 'media') onResize();
@@ -156,7 +162,18 @@ function initParallax() {
   sync();
 }
 
+/* ---------- pausa fora da tela ---------- */
+
+function initOffscreen() {
+  const hero = document.querySelector('.hero');
+  if (!hero || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(([entry]) => {
+    hero.classList.toggle('is-offscreen', !entry.isIntersecting);
+  }).observe(hero);
+}
+
 export function initHero() {
   playEntrance();
   initParallax();
+  initOffscreen();
 }

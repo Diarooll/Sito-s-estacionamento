@@ -33,11 +33,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira:ital,wght@1,700;1,800&display=swap">
 
-  <link rel="stylesheet" href="css/base.css?v=202610161810">
-  <link rel="stylesheet" href="css/layout.css?v=202610161810">
-  <link rel="stylesheet" href="css/components.css?v=202610161810">
-  <link rel="stylesheet" href="css/sections.css?v=202610161810">
-  <link rel="stylesheet" href="css/animations.css?v=202610161810">
+  <link rel="stylesheet" href="css/base.css?v=202610161833">
+  <link rel="stylesheet" href="css/layout.css?v=202610161833">
+  <link rel="stylesheet" href="css/components.css?v=202610161833">
+  <link rel="stylesheet" href="css/sections.css?v=202610161833">
+  <link rel="stylesheet" href="css/animations.css?v=202610161833">
 
 
   <script type="application/ld+json">
@@ -115,25 +115,27 @@
 
   <main id="conteudo">
     <!-- HERO -->
-    <section class="hero" id="inicio" aria-labelledby="hero-title">
+    <section class="hero hero--full" id="inicio" aria-labelledby="hero-title">
+      <div class="hero__bg" aria-hidden="true" data-hero="media">
+        <img class="hero__symbol" src="assets/logo/simbolo-e.svg" alt="" width="900" height="900" decoding="async" data-parallax="0.3" data-parallax-max="160">
+        <span class="hero__beam hero__beam--1"></span>
+        <span class="hero__beam hero__beam--2"></span>
+        <span class="hero__beam hero__beam--3"></span>
+        <div class="hero__fade"></div>
+      </div>
+
       <div class="hero__inner container">
         <div class="hero__content">
           <p class="hero__eyebrow" data-hero>Méier · Rio de Janeiro</p>
           <h1 class="hero__title" id="hero-title">
             <span class="hero__line" data-hero>Estacione tranquilo</span>
             <span class="hero__line" data-hero>no coração</span>
-            <span class="hero__line" data-hero>do Méier.</span>
+            <span class="hero__line hero__line--accent" data-hero>do Méier.</span>
           </h1>
           <p class="hero__text" data-hero>Há mais de 27 anos com você. Duas unidades a poucos passos uma da outra, preço justo e o mesmo valor para carros e motos.</p>
           <div class="hero__actions" data-hero>
             <a class="btn btn--primary" href="#precos">Ver preços</a>
             <a class="btn btn--ghost" href="#unidades">Como chegar</a>
-          </div>
-        </div>
-
-        <div class="hero__media" data-hero="media">
-          <div class="media-placeholder media-placeholder--hero">
-            <img class="media-placeholder__icon" src="assets/logo/simbolo-e.svg" alt="" width="300" height="300" decoding="async" data-parallax="0.12">
           </div>
         </div>
 
@@ -152,6 +154,11 @@
           </li>
         </ul>
       </div>
+
+      <a class="hero__scroll" href="#servicos" data-hero aria-label="Role para baixo até Serviços">
+        <span class="hero__scroll-icon" aria-hidden="true"></span>
+        <span class="hero__scroll-text">Role para baixo</span>
+      </a>
     </section>
 
     <!-- SERVIÇOS -->
@@ -419,19 +426,19 @@
   <script type="importmap">
   {
     "imports": {
-      "./js/modules/cards.js": "./js/modules/cards.js?v=202610161810",
-      "./js/modules/counters.js": "./js/modules/counters.js?v=202610161810",
-      "./js/modules/header.js": "./js/modules/header.js?v=202610161810",
-      "./js/modules/hero.js": "./js/modules/hero.js?v=202610161810",
-      "./js/modules/hours.js": "./js/modules/hours.js?v=202610161810",
-      "./js/modules/maps.js": "./js/modules/maps.js?v=202610161810",
-      "./js/modules/motion.js": "./js/modules/motion.js?v=202610161810",
-      "./js/modules/reveal.js": "./js/modules/reveal.js?v=202610161810",
-      "./js/modules/scrollspy.js": "./js/modules/scrollspy.js?v=202610161810",
-      "./js/modules/tabs.js": "./js/modules/tabs.js?v=202610161810"
+      "./js/modules/cards.js": "./js/modules/cards.js?v=202610161833",
+      "./js/modules/counters.js": "./js/modules/counters.js?v=202610161833",
+      "./js/modules/header.js": "./js/modules/header.js?v=202610161833",
+      "./js/modules/hero.js": "./js/modules/hero.js?v=202610161833",
+      "./js/modules/hours.js": "./js/modules/hours.js?v=202610161833",
+      "./js/modules/maps.js": "./js/modules/maps.js?v=202610161833",
+      "./js/modules/motion.js": "./js/modules/motion.js?v=202610161833",
+      "./js/modules/reveal.js": "./js/modules/reveal.js?v=202610161833",
+      "./js/modules/scrollspy.js": "./js/modules/scrollspy.js?v=202610161833",
+      "./js/modules/tabs.js": "./js/modules/tabs.js?v=202610161833"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=202610161810"></script>
+  <script type="module" src="js/main.js?v=202610161833"></script>
 </body>
 </html>

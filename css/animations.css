@@ -95,6 +95,25 @@
   transform: none !important;
 }
 
+/* hero: faixas paradas, só a opacidade pulsa devagar */
+.is-reduced .hero__beam {
+  left: auto;
+  right: 18%;
+  transform: none;
+  animation: hero-beam-pulse 6s var(--ease-in-out) var(--beam-delay) infinite alternate;
+}
+.is-reduced .hero__beam--2 { right: 30%; }
+.is-reduced .hero__beam--3 { right: 8%; }
+
+.is-reduced .hero__scroll-icon::before {
+  animation: hero-beam-pulse 3s var(--ease-in-out) infinite alternate;
+}
+
+@keyframes hero-beam-pulse {
+  from { opacity: .15; }
+  to   { opacity: .7; }
+}
+
 .is-reduced .hours__status::after {
   animation-duration: 3s;
 }
@@ -111,6 +130,12 @@
 .is-lite .card,
 .js.is-lite .card[data-reveal].is-visible {
   transform: none;
+}
+
+/* hero: só 1 faixa de luz */
+.is-lite .hero__beam--2,
+.is-lite .hero__beam--3 {
+  display: none;
 }
 
 .is-lite .card::before {
@@ -149,6 +174,18 @@
    (não desliga as animações, só remove deslocamentos/loops longos)
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
+  .hero__beam {
+    left: auto;
+    right: 18%;
+    transform: none;
+    animation: hero-beam-pulse 6s var(--ease-in-out) var(--beam-delay) infinite alternate;
+  }
+  .hero__beam--2 { right: 30%; }
+  .hero__beam--3 { right: 8%; }
+  .hero__scroll-icon::before {
+    animation: hero-beam-pulse 3s var(--ease-in-out) infinite alternate;
+  }
+
   .js [data-reveal] {
     --reveal-x: 0px !important;
     --reveal-y: 0px !important;
