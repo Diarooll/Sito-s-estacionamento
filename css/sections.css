@@ -228,7 +228,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   padding-top: 1.25rem;
-  border-top: 1px solid var(--borda);
+  text-align: center;
 }
 
 .hero__stats .stat__value {
@@ -243,17 +243,12 @@
 @media (min-width: 640px) {
   .hero__stats {
     grid-template-columns: repeat(3, auto);
-    justify-content: start;
+    justify-content: center;
     gap: 0;
-    padding-right: 11rem; /* espaço do indicador "role" */
   }
 
   .hero__stats .stat {
     padding-inline: clamp(1.25rem, .5rem + 3vw, 3.5rem);
-  }
-
-  .hero__stats .stat:first-child {
-    padding-left: 0;
   }
 
   .hero__stats .stat + .stat {
@@ -486,6 +481,14 @@
    ========================================================================== */
 .tour .embed--wide {
   box-shadow: var(--shadow);
+}
+
+@media (min-width: 640px) {
+  /* abas centralizadas, como nos preços */
+  .tour .tabs__list {
+    display: flex;
+    margin-inline: auto;
+  }
 }
 
 /* ==========================================================================
