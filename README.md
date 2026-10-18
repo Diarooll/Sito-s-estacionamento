@@ -25,7 +25,7 @@ Landing page para o **Sito's Estacionamentos**, estacionamento de um cliente com
 - **HTML5, CSS3 e JavaScript (ES modules) puros**, sem frameworks, bibliotecas ou etapa de build
 - Web Animations API, IntersectionObserver, `requestAnimationFrame` e `Intl` (fuso horário)
 - Google Fonts (Saira e Inter) e embeds do Google Maps/Street View
-- GitHub Pages para hospedagem
+- Cloudflare Pages para hospedagem (domínio `.com.br` no registro.br)
 - **Ferramentas de IA:** o desenvolvimento usou o Claude Code (Anthropic). Eu planejei e direcionei o projeto, defini os requisitos com o cliente e revisei cada entrega. A implementação foi feita por agentes de IA especializados em HTML, CSS e JavaScript, que trabalharam em paralelo e se coordenaram por um contrato compartilhado ([`docs/CONTRATO.md`](docs/CONTRATO.md)) com os nomes de classes, atributos e decisões do projeto.
 
 ## Telas
@@ -57,6 +57,7 @@ js/
   modules/            motion, header, hero, reveal, counters, tabs,
                       scrollspy, cards, maps, hours
 assets/               logo em SVG, ícones e imagem de compartilhamento
+scripts/build.sh      monta a pasta dist/ que vai para o ar
 scripts/versao.sh     atualiza a versão dos arquivos (cache-busting)
 scripts/celular.sh    abre o site no celular pela rede local (com QR code)
 docs/CONTRATO.md      contrato entre os agentes (HTML/CSS/JS)
@@ -87,4 +88,26 @@ Antes de publicar uma mudança de CSS ou JS:
 
 ```bash
 ./scripts/versao.sh
+```
+
+## Publicar (Cloudflare Pages)
+
+O deploy é automático: cada `git push` na `main` coloca o site no ar. O `scripts/build.sh` monta a pasta `dist/` só com `index.html`, `css/`, `js/` e `assets/` (docs, scripts e arquivos do Claude não vão para o ar), atualiza a versão `?v=` sozinho e gera `_headers`, `robots.txt`, `sitemap.xml` e as URLs absolutas de compartilhamento.
+
+Configuração no painel da Cloudflare (*Workers & Pages → Create → Pages → Connect to Git*):
+
+| Campo | Valor |
+|---|---|
+| Framework preset | None |
+| Build command | `bash scripts/build.sh` |
+| Build output directory | `dist` |
+| Variável de ambiente | `SITE_URL` = `https://www.seudominio.com.br` |
+
+Domínio: registre no registro.br, adicione o site na Cloudflare (plano Free) e troque os servidores DNS no registro.br pelos 2 nameservers que a Cloudflare mostrar. Depois, em *Custom domains* do projeto Pages, adicione o domínio com e sem `www`.
+
+Para testar o build localmente:
+
+```bash
+SITE_URL=https://www.seudominio.com.br ./scripts/build.sh
+python3 -m http.server 8080 -d dist
 ```
