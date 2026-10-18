@@ -21,3 +21,6 @@ node_modules/
 
 # capturas de revisão locais
 _review/
+
+# grafo de conhecimento local (graphify)
+graphify-out/
