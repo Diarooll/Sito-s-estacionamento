@@ -1256,3 +1256,163 @@
   80%,
   100% { transform: scale(3.2); opacity: 0; }
 }
+
+/* ---------- Diária & Pernoite: Dia / Noite ---------- */
+.card__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.stay-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.no-js .stay-toggle { display: none; }
+
+.stay-toggle__btn {
+  min-height: 30px;
+  padding: .2rem .8rem;
+  border-radius: 999px;
+  color: var(--cinza);
+  font-size: .75rem;
+  font-weight: 600;
+  transition: background-color var(--dur-fast) linear, color var(--dur-fast) linear;
+}
+
+.stay-toggle__btn[aria-pressed="true"] {
+  background: var(--branco);
+  color: var(--preto);
+}
+
+.is-night .stay-toggle__btn[aria-pressed="true"] {
+  background: #c9d3ff;
+}
+
+/* fundo do card escurece e puxa pro azul de noite */
+.bento__item--diaria {
+  transition: background-color var(--dur-slow) var(--ease-out), border-color var(--dur) linear;
+}
+
+.bento__item--diaria.is-night {
+  border-color: rgba(140, 160, 255, .2);
+  background:
+    radial-gradient(90% 70% at 50% 0%, rgba(80, 100, 200, .2), transparent 70%),
+    #0c0e16;
+}
+
+/* o astro segue a escolha: sol de dia, lua de noite (sem alternar sozinho) */
+.bento__item--diaria .viz__sun,
+.bento__item--diaria .viz__moon {
+  animation: none;
+  transition: opacity var(--dur) var(--ease-out);
+}
+
+.bento__item--diaria .viz__sun { opacity: 1; }
+.bento__item--diaria .viz__moon { opacity: 0; }
+.bento__item--diaria.is-night .viz__sun { opacity: 0; }
+.bento__item--diaria.is-night .viz__moon { opacity: 1; }
+
+/* ---------- Unidades: qual fica mais perto ---------- */
+.nearest {
+  display: grid;
+  justify-items: center;
+  gap: .6rem;
+  margin: -1rem 0 1.75rem;
+  text-align: center;
+}
+
+.nearest__msg {
+  min-height: 1.4em;
+  font-size: var(--fs-sm);
+  color: var(--cinza);
+}
+
+/* selo no canto do card, sem empurrar o título */
+.unit {
+  position: relative;
+}
+
+.unit__badge {
+  position: absolute;
+  top: 1.75rem;
+  right: 1.75rem;
+  padding: .25rem .7rem;
+  border-radius: 999px;
+  background: rgba(43, 212, 107, .14);
+  border: 1px solid rgba(43, 212, 107, .45);
+  color: var(--verde);
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.unit__distance {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--branco);
+}
+
+.unit.is-nearest {
+  border-color: rgba(43, 212, 107, .45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 0 0 1px rgba(43, 212, 107, .2);
+}
+
+/* ---------- Barra fixa no celular ---------- */
+.mobile-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .6rem var(--gutter) calc(.6rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line-2);
+  background: rgba(11, 11, 11, .92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transform: translate3d(0, 110%, 0);
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.mobile-bar.is-visible {
+  transform: none;
+}
+
+.menu-open .mobile-bar {
+  transform: translate3d(0, 110%, 0);
+}
+
+.mobile-bar__status {
+  min-height: 0;
+  padding: .4rem .8rem .4rem .95rem;
+  font-size: .8125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-bar__cta {
+  flex: none;
+}
+
+.no-js .mobile-bar { display: none; }
+
+/* espaço no fim da página para a barra não cobrir o rodapé */
+@media (max-width: 959px) {
+  .has-mobile-bar .site-footer {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (min-width: 960px) {
+  .mobile-bar { display: none; }
+}

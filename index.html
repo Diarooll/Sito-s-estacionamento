@@ -33,11 +33,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600;700&family=Saira:ital,wght@1,700;1,800&display=swap">
 
-  <link rel="stylesheet" href="css/base.css?v=202610181751">
-  <link rel="stylesheet" href="css/layout.css?v=202610181751">
-  <link rel="stylesheet" href="css/components.css?v=202610181751">
-  <link rel="stylesheet" href="css/sections.css?v=202610181751">
-  <link rel="stylesheet" href="css/animations.css?v=202610181751">
+  <link rel="stylesheet" href="css/base.css?v=202610182002">
+  <link rel="stylesheet" href="css/layout.css?v=202610182002">
+  <link rel="stylesheet" href="css/components.css?v=202610182002">
+  <link rel="stylesheet" href="css/sections.css?v=202610182002">
+  <link rel="stylesheet" href="css/animations.css?v=202610182002">
 
 
   <script type="application/ld+json">
@@ -125,7 +125,10 @@
 
       <div class="hero__inner container">
         <div class="hero__content">
-          <p class="hero__eyebrow" data-hero>Méier · Rio de Janeiro</p>
+          <div class="hero__chips" data-hero>
+            <p class="hero__eyebrow">Méier · Rio de Janeiro</p>
+            <p class="hours__status hero__status" data-hours-status>Seg a Sex 7:00–21:00 · Sábado 7:30–17:00</p>
+          </div>
           <h1 class="hero__title" id="hero-title">
             <span class="hero__line" data-hero>Estacione tranquilo</span>
             <span class="hero__line" data-hero>no coração</span>
@@ -244,14 +247,20 @@
             </div>
           </article>
 
-          <article class="card bento__item bento__item--diaria" data-spotlight data-reveal>
+          <article class="card bento__item bento__item--diaria" data-spotlight data-stay data-reveal>
             <div class="viz viz--arc" aria-hidden="true">
               <span class="viz__orbit"><span class="viz__sun"></span><span class="viz__moon"></span></span>
             </div>
             <div class="card__body">
-              <span class="card__tag">Diária &amp; Pernoite</span>
+              <div class="card__row">
+                <span class="card__tag">Diária &amp; Pernoite</span>
+                <div class="stay-toggle" role="group" aria-label="Ver preço de dia ou de noite" data-stay-toggle>
+                  <button class="stay-toggle__btn" type="button" data-stay-mode="day" aria-pressed="true">Dia</button>
+                  <button class="stay-toggle__btn" type="button" data-stay-mode="night" aria-pressed="false">Noite</button>
+                </div>
+              </div>
               <h3 class="card__title">O dia todo ou a noite inteira</h3>
-              <p class="card__price"><span class="card__price-label">diária</span> <span class="card__price-value">R$ 29</span></p>
+              <p class="card__price" aria-live="polite"><span class="card__price-label" data-stay-label>diária</span> <span class="card__price-value" data-stay-price>R$ 29</span></p>
               <p class="card__note">Pernoite a partir de R$ 27. Seu veículo guardado enquanto você descansa.</p>
             </div>
           </article>
@@ -353,25 +362,38 @@
           <p class="section__lead">Escolha a mais perto do seu destino e trace a rota em um toque.</p>
         </header>
 
+        <!-- nearest.js: só aparece se o navegador tiver geolocalização -->
+        <div class="nearest" data-nearest data-reveal hidden>
+          <button class="btn btn--ghost nearest__btn" type="button" data-nearest-btn>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>
+            <span data-nearest-label>Qual fica mais perto de mim?</span>
+          </button>
+          <p class="nearest__msg" data-nearest-msg aria-live="polite"></p>
+        </div>
+
         <div class="units__grid" data-reveal-stagger>
-          <article class="unit" data-reveal>
+          <article class="unit" data-unit="Ana Barbosa" data-lat="-22.9006456" data-lng="-43.2816968" data-reveal>
             <div class="unit__body">
               <span class="unit__pin" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+              <span class="unit__badge" data-unit-badge hidden>Mais perto de você</span>
               <h3 class="unit__title">Unidade 1 · Ana Barbosa</h3>
               <address class="unit__address">R. Ana Barbosa, 44 – Méier<br>Rio de Janeiro – RJ, 20735-120</address>
               <a class="btn btn--primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=R.+Ana+Barbosa,+44+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ" target="_blank" rel="noopener">Como chegar<span class="sr-only"> à unidade Ana Barbosa (abre em nova aba)</span></a>
+              <p class="unit__distance" data-unit-distance hidden></p>
             </div>
             <div class="embed unit__map" data-lazy-src="https://www.google.com/maps?q=R.+Ana+Barbosa,+44+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ,+20735-120&amp;output=embed" data-lazy-title="Mapa da unidade R. Ana Barbosa, 44">
               <noscript><a href="https://www.google.com/maps?q=R.+Ana+Barbosa,+44+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ,+20735-120" target="_blank" rel="noopener">Ver mapa da unidade R. Ana Barbosa, 44</a></noscript>
             </div>
           </article>
 
-          <article class="unit" data-reveal>
+          <article class="unit" data-unit="Jacinto" data-lat="-22.9035429" data-lng="-43.2814071" data-reveal>
             <div class="unit__body">
               <span class="unit__pin" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+              <span class="unit__badge" data-unit-badge hidden>Mais perto de você</span>
               <h3 class="unit__title">Unidade 2 · Jacinto</h3>
               <address class="unit__address">R. Jacinto, 57 e 61 – Méier<br>Rio de Janeiro – RJ, 20725-020</address>
               <a class="btn btn--primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=R.+Jacinto,+57+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ" target="_blank" rel="noopener">Como chegar<span class="sr-only"> à unidade Jacinto (abre em nova aba)</span></a>
+              <p class="unit__distance" data-unit-distance hidden></p>
             </div>
             <div class="embed unit__map" data-lazy-src="https://www.google.com/maps?q=R.+Jacinto,+57+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ,+20725-020&amp;output=embed" data-lazy-title="Mapa da unidade R. Jacinto, 57 e 61">
               <noscript><a href="https://www.google.com/maps?q=R.+Jacinto,+57+-+M%C3%A9ier,+Rio+de+Janeiro+-+RJ,+20725-020" target="_blank" rel="noopener">Ver mapa da unidade R. Jacinto, 57 e 61</a></noscript>
@@ -452,25 +474,33 @@
     </div>
   </footer>
 
+  <!-- Barra fixa no celular (mobilebar.js mostra depois que os botões do hero saem da tela) -->
+  <div class="mobile-bar" data-mobile-bar>
+    <p class="hours__status mobile-bar__status" data-hours-status="short">Seg a Sáb</p>
+    <a class="btn btn--primary btn--sm mobile-bar__cta" href="#unidades">Como chegar</a>
+  </div>
+
   <!-- Versão dos arquivos: força o navegador a baixar CSS/JS novos a cada atualização
        (rode scripts/versao.sh antes de publicar). -->
   <script type="importmap">
   {
     "imports": {
-      "./js/modules/calculator.js": "./js/modules/calculator.js?v=202610181751",
-      "./js/modules/cards.js": "./js/modules/cards.js?v=202610181751",
-      "./js/modules/counters.js": "./js/modules/counters.js?v=202610181751",
-      "./js/modules/header.js": "./js/modules/header.js?v=202610181751",
-      "./js/modules/hero.js": "./js/modules/hero.js?v=202610181751",
-      "./js/modules/hours.js": "./js/modules/hours.js?v=202610181751",
-      "./js/modules/maps.js": "./js/modules/maps.js?v=202610181751",
-      "./js/modules/motion.js": "./js/modules/motion.js?v=202610181751",
-      "./js/modules/reveal.js": "./js/modules/reveal.js?v=202610181751",
-      "./js/modules/scrollspy.js": "./js/modules/scrollspy.js?v=202610181751",
-      "./js/modules/tabs.js": "./js/modules/tabs.js?v=202610181751"
+      "./js/modules/calculator.js": "./js/modules/calculator.js?v=202610182002",
+      "./js/modules/cards.js": "./js/modules/cards.js?v=202610182002",
+      "./js/modules/counters.js": "./js/modules/counters.js?v=202610182002",
+      "./js/modules/header.js": "./js/modules/header.js?v=202610182002",
+      "./js/modules/hero.js": "./js/modules/hero.js?v=202610182002",
+      "./js/modules/hours.js": "./js/modules/hours.js?v=202610182002",
+      "./js/modules/maps.js": "./js/modules/maps.js?v=202610182002",
+      "./js/modules/mobilebar.js": "./js/modules/mobilebar.js?v=202610182002",
+      "./js/modules/motion.js": "./js/modules/motion.js?v=202610182002",
+      "./js/modules/nearest.js": "./js/modules/nearest.js?v=202610182002",
+      "./js/modules/reveal.js": "./js/modules/reveal.js?v=202610182002",
+      "./js/modules/scrollspy.js": "./js/modules/scrollspy.js?v=202610182002",
+      "./js/modules/tabs.js": "./js/modules/tabs.js?v=202610182002"
     }
   }
   </script>
-  <script type="module" src="js/main.js?v=202610181751"></script>
+  <script type="module" src="js/main.js?v=202610182002"></script>
 </body>
 </html>

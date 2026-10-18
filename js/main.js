@@ -20,6 +20,8 @@ const MODULES = [
   ['./modules/cards.js', 'initCards'],
   ['./modules/maps.js', 'initMaps'],
   ['./modules/hours.js', 'initHours'],
+  ['./modules/mobilebar.js', 'initMobileBar'],
+  ['./modules/nearest.js', 'initNearest'],
 ];
 
 async function run(path, fnName) {

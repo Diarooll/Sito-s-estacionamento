@@ -7,6 +7,7 @@
  * - Mensalista ([data-month]): calendário do mês atual; cada dia marcado soma
  *   o preço escolhido na barra do Rotativo (tempo por dia) e compara com o
  *   valor fixo do mensalista. Domingo: fechado.
+ * - Diária & Pernoite ([data-stay]): botões Dia / Noite trocam o preço.
  * - Janelinha (#precos-dialog): tabela completa, aberta por [data-dialog-open].
  *
  * Fonte única dos valores: as tabelas da janelinha (data-count-to de cada
@@ -31,6 +32,7 @@ function readPrices(dialog) {
     units[panel.dataset.tabPanel] = {
       hours: rows.slice(0, 9), // promoção 30 min … 8h01 até 9h
       daily: find('Diária'),
+      overnight: find('Pernoite'),
       monthly: find('Mensalista'),
     };
   });
@@ -188,6 +190,31 @@ function setupMonth(root, getUnit, getStep) {
   return render;
 }
 
+/* ---------- Diária & Pernoite: Dia / Noite ---------- */
+
+function setupStay(root, getUnit) {
+  const buttons = [...root.querySelectorAll('[data-stay-mode]')];
+  const label = root.querySelector('[data-stay-label]');
+  const price = root.querySelector('[data-stay-price]');
+  if (!buttons.length) return () => {};
+
+  let night = false;
+
+  const render = () => {
+    const { daily, overnight } = getUnit();
+    root.classList.toggle('is-night', night);
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.stayMode === 'night') === night)));
+    label.textContent = night ? 'pernoite' : 'diária';
+    setText(price, brl(night ? overnight : daily));
+  };
+
+  buttons.forEach((b) => b.addEventListener('click', () => {
+    night = b.dataset.stayMode === 'night';
+    render();
+  }));
+  return render;
+}
+
 /* ---------- janelinha com a tabela completa ---------- */
 
 function setupDialog(dialog, getUnitKey) {
@@ -236,6 +263,8 @@ export function initCalculator() {
     : { render: () => {}, current: () => null };
   const renderCalc = calc.render;
   if (monthRoot) renderMonth = setupMonth(monthRoot, getUnit, calc.current);
+  const stayRoot = document.querySelector('[data-stay]');
+  const renderStay = stayRoot ? setupStay(stayRoot, getUnit) : () => {};
 
   const unitSwitch = document.querySelector('[data-unit-switch]');
   if (unitSwitch) {
@@ -246,10 +275,12 @@ export function initCalculator() {
       unitKey = e.target.value;
       renderCalc();
       renderMonth();
+      renderStay();
     });
   }
 
   setupDialog(dialog, () => unitKey);
   renderCalc();
   renderMonth();
+  renderStay();
 }

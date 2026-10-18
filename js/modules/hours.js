@@ -1,6 +1,7 @@
 /**
  * hours.js — status "Aberto/Fechado agora" no fuso de São Paulo (Intl),
  * independente do fuso do visitante. Atualiza na virada de cada minuto.
+ * [data-hours-status="short"] recebe a versão curta (barra fixa do celular).
  */
 
 const TIME_ZONE = 'America/Sao_Paulo';
@@ -40,21 +41,21 @@ function status() {
   const today = SCHEDULE[day];
 
   if (today && minute >= today[0] && minute < today[1]) {
-    return { open: true, text: `Aberto agora · fecha às ${toClock(today[1])}` };
+    return { open: true, text: `Aberto agora · fecha às ${toClock(today[1])}`, short: `Aberto até ${toClock(today[1])}` };
   }
 
   // Próxima abertura: hoje (antes de abrir), amanhã ou o próximo dia útil.
   if (today && minute < today[0]) {
-    return { open: false, text: `Fechado agora · abre hoje às ${toClock(today[0])}` };
+    return { open: false, text: `Fechado agora · abre hoje às ${toClock(today[0])}`, short: `Abre às ${toClock(today[0])}` };
   }
   for (let ahead = 1; ahead <= 7; ahead += 1) {
     const d = (day + ahead) % 7;
     if (SCHEDULE[d]) {
       const when = ahead === 1 ? 'amanhã' : DAY_LABELS[d];
-      return { open: false, text: `Fechado agora · abre ${when} às ${toClock(SCHEDULE[d][0])}` };
+      return { open: false, text: `Fechado agora · abre ${when} às ${toClock(SCHEDULE[d][0])}`, short: `Abre ${when} ${toClock(SCHEDULE[d][0])}` };
     }
   }
-  return { open: false, text: 'Fechado agora' };
+  return { open: false, text: 'Fechado agora', short: 'Fechado' };
 }
 
 export function initHours() {
@@ -62,9 +63,10 @@ export function initHours() {
   if (!targets.length) return;
 
   const render = () => {
-    const { open, text } = status();
+    const { open, text, short } = status();
     targets.forEach((el) => {
-      if (el.textContent !== text) el.textContent = text; // aria-live só fala quando muda
+      const value = el.dataset.hoursStatus === 'short' ? short : text;
+      if (el.textContent !== value) el.textContent = value; // aria-live só fala quando muda
       el.classList.toggle('is-open', open);
       el.classList.toggle('is-closed', !open);
     });
