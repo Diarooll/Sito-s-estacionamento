@@ -74,7 +74,7 @@
 /* bento: ilustrações e borda de luz param no estado final (sem loop) */
 .is-reduced .viz__orbit,
 .is-reduced .viz__sun,
-.viz__moon,
+.is-reduced .viz__moon,
 .is-reduced .card__border::before {
   animation: none;
 }
