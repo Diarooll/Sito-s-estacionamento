@@ -58,6 +58,7 @@ js/
                       scrollspy, cards, maps, hours
 assets/               logo em SVG, ícones e imagem de compartilhamento
 scripts/versao.sh     atualiza a versão dos arquivos (cache-busting)
+scripts/celular.sh    abre o site no celular pela rede local (com QR code)
 docs/CONTRATO.md      contrato entre os agentes (HTML/CSS/JS)
 ```
 
@@ -71,6 +72,16 @@ python3 -m http.server 8080
 ```
 
 Também funciona com a extensão **Live Server** do VS Code ("Go Live").
+
+### Ver no celular
+
+Com o celular no mesmo Wi-Fi do computador:
+
+```bash
+./scripts/celular.sh        # porta 8000; ou ./scripts/celular.sh 8080
+```
+
+O terminal mostra o endereço (ex.: `http://192.168.0.107:8000`) e um QR code — aponte a câmera do celular para abrir. O QR code precisa do `qrencode` (`sudo apt install qrencode`); sem ele, digite o endereço no navegador do celular. Se não abrir, libere a porta no firewall: `sudo ufw allow 8000`. `Ctrl+C` para parar.
 
 Antes de publicar uma mudança de CSS ou JS:
 
