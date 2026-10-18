@@ -752,8 +752,10 @@
 }
 
 /* Diária & Pernoite: sol/lua girando num arco (só rotate) */
+/* altura = raio do arco (90px) + meio astro (9px) + folga do brilho:
+   no pico o sol/lua não encosta no topo da caixa (overflow hidden) */
 .viz--arc {
-  height: 96px;
+  height: 120px;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
 }
