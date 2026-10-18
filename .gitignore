@@ -24,3 +24,6 @@ _review/
 
 # grafo de conhecimento local (graphify)
 graphify-out/
+
+# saída do build (scripts/build.sh)
+dist/
