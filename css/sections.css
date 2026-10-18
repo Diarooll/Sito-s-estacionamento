@@ -169,21 +169,21 @@
 .hero__eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: .6rem;
-  margin-bottom: clamp(.75rem, 2svh, 1.25rem);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  gap: .55rem;
+  margin-bottom: clamp(.9rem, 2.4svh, 1.5rem);
+  padding: .35rem .85rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: .8125rem;
+  font-weight: 500;
   color: var(--cinza);
 }
 
 .hero__eyebrow::before {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--vermelho);
   box-shadow: 0 0 0 4px rgba(237, 28, 36, .2);
@@ -192,8 +192,8 @@
 .hero__title {
   /* cresce com a largura, mas limitado pela altura: tudo cabe em 100svh */
   font-size: clamp(2.75rem, min(1rem + 5.4vw, 9svh), 6rem);
-  line-height: .94;
-  letter-spacing: -0.02em;
+  line-height: .98;
+  letter-spacing: -0.045em;
 }
 
 .hero__line {
@@ -351,6 +351,11 @@
 /* ==========================================================================
    SERVIÇOS
    ========================================================================== */
+/* logo depois do hero: menos respiro no topo (o hero já termina com folga) */
+#servicos {
+  padding-top: clamp(2rem, 1rem + 4vw, 5rem);
+}
+
 .services .card__media {
   aspect-ratio: 16 / 10;
 }
@@ -358,42 +363,21 @@
 /* ==========================================================================
    PREÇOS
    ========================================================================== */
-/* tudo centralizado: cabeçalho, abas, tabela (máx. 760px) e notas logo abaixo */
-.pricing .section__head {
-  margin-inline: auto;
-  text-align: center;
-}
-
-.pricing .section__eyebrow {
-  justify-content: center;
-}
-
-.pricing .tabs {
-  max-width: 760px;
-  margin-inline: auto;
-}
-
-.pricing .tabs__list {
-  display: flex;
+/* tabela completa dentro da janelinha (.prices-dialog, components.css) */
+.prices-dialog .tabs__list {
+  margin-bottom: 1rem;
 }
 
 .pricing__notes {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: .6rem;
-  max-width: 760px;
-  margin: 1.25rem auto 0;
+  display: grid;
+  gap: .45rem;
+  margin-top: 1rem;
 }
 
 .pricing__notes li {
   display: flex;
   align-items: center;
   gap: .55rem;
-  padding: .55rem 1rem;
-  border: 1px solid var(--borda);
-  border-radius: 22px; /* empilhadas no celular: a 3ª pode ter 2 linhas */
-  background: var(--grafite);
   font-size: var(--fs-sm);
   line-height: 1.4;
   color: var(--cinza);
@@ -408,54 +392,44 @@
   background: var(--vermelho);
 }
 
-@media (min-width: 640px) {
-  /* abas no tamanho do conteúdo, centralizadas acima da tabela */
-  .pricing .tabs__list {
-    display: flex;
-    width: max-content;
-    margin-inline: auto;
-  }
-  .pricing__notes {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: none; /* as 3 notas cabem numa linha só a partir de ~960px */
-  }
-  .pricing__notes li {
-    display: inline-flex;
-    border-radius: 999px;
-  }
-}
-
 /* ==========================================================================
    UNIDADES
    ========================================================================== */
 .unit {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--borda);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: var(--grafite);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .04), transparent 40%),
+    var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
   overflow: hidden;
   transition: border-color var(--dur) linear;
 }
 
 .unit:hover {
-  border-color: #3a3a3a;
+  border-color: var(--line-2);
 }
 
-.unit__media {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: var(--grafite-2);
+/* ícone do pino num quadradinho, como nos cards de produto */
+.unit__pin {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: .25rem;
+  border: 1px solid rgba(237, 28, 36, .3);
+  border-radius: 12px;
+  background: rgba(237, 28, 36, .1);
+  color: #ff5a5f;
 }
 
 .unit__body {
   display: grid;
   justify-items: start;
   gap: .75rem;
-  padding: 1.5rem 1.5rem 1.25rem;
+  padding: 1.75rem 1.75rem 1.25rem;
 }
 
 .unit__title {
@@ -472,7 +446,7 @@
 }
 
 .unit__map {
-  margin: 0 1.5rem 1.5rem;
+  margin: .5rem 1.75rem 1.75rem;
   aspect-ratio: 16 / 10;
 }
 
@@ -510,11 +484,12 @@ div.hours {
   max-width: 760px;
   margin-inline: auto;
   padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
-  border: 1px solid var(--borda);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background:
     radial-gradient(70% 120% at 100% 0%, rgba(237, 28, 36, .08), transparent 60%),
-    var(--grafite);
+    var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
 }
 
 .hours__status {
@@ -560,8 +535,8 @@ div.hours {
     flex-direction: column;
     justify-content: flex-start;
     padding: 1.25rem 1.25rem 1.4rem;
-    border: 1px solid var(--borda);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: var(--grafite-2);
+    background: var(--surface);
   }
 }

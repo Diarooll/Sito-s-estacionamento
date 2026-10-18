@@ -28,24 +28,9 @@
   transform: none;
 }
 
-/* cards com tilt: depois de revelados o transform volta a ser o do tilt
-   (components.css), com transição curta para o retorno suave */
-.js .card[data-reveal].is-visible {
-  transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
-}
-
 /* reveal terminou (JS adiciona .is-revealed e remove --reveal-delay):
-   hover/tilt voltam sem atraso e com transição curta */
+   hovers voltam sem atraso */
 .js [data-reveal].is-revealed {
-  transition-delay: 0ms;
-}
-
-.js .card[data-reveal].is-revealed {
-  transition: transform var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out), border-color var(--dur) linear;
-}
-
-.js .card[data-reveal].is-visible.is-tilting {
-  transition: opacity var(--dur-slow) var(--ease-out), border-color var(--dur) linear;
   transition-delay: 0ms;
 }
 
@@ -77,11 +62,6 @@
   transform: none;
 }
 
-.is-reduced .card,
-.js.is-reduced .card[data-reveal].is-visible {
-  transform: none;
-}
-
 .is-reduced .site-nav,
 .is-reduced .site-nav__list > li {
   transform: none !important;
@@ -91,9 +71,15 @@
   display: none;
 }
 
-.is-reduced .media-placeholder__icon {
-  transform: none !important;
+/* bento: ilustrações e borda de luz param no estado final (sem loop) */
+.is-reduced .viz__orbit,
+.is-reduced .viz__sun,
+.viz__moon,
+.is-reduced .card__border::before {
+  animation: none;
 }
+.is-reduced .viz__orbit { transform: rotate(60deg); }
+.is-reduced .viz__moon { opacity: 0; }
 
 /* hero: faixas paradas, só a opacidade pulsa devagar */
 .is-reduced .hero__beam {
@@ -120,25 +106,16 @@
 
 /* ==========================================================================
    .is-lite — hardware fraco: mantém reveals/contadores/abas/hero;
-   sem tilt, sem parallax, sem backdrop-filter.
+   sem spotlight nos cards, sem parallax, sem backdrop-filter.
    (pode chegar ~1,2s depois do load, então nada aqui "pula")
    ========================================================================== */
 .is-lite [data-parallax] {
   transform: none;
 }
 
-.is-lite .card,
-.js.is-lite .card[data-reveal].is-visible {
-  transform: none;
-}
-
 /* hero: só 1 faixa de luz */
 .is-lite .hero__beam--2,
 .is-lite .hero__beam--3 {
-  display: none;
-}
-
-.is-lite .card::before {
   display: none;
 }
 
@@ -165,10 +142,6 @@
   transition: none !important;
 }
 
-.anim-fallback .card {
-  transform: none !important;
-}
-
 /* ==========================================================================
    prefers-reduced-motion — mesma regra do .is-reduced, mesmo antes do JS
    (não desliga as animações, só remove deslocamentos/loops longos)
@@ -193,23 +166,25 @@
     transition-duration: var(--dur), var(--dur);
   }
 
-  [data-parallax],
-  .card,
-  .js .card[data-reveal].is-visible {
+  [data-parallax] {
     transform: none;
   }
 
-  .card::before,
   .btn--primary::after {
     display: none;
   }
 
+  .viz__orbit,
+  .viz__sun,
+  .viz__moon,
+  .card__border::before {
+    animation: none;
+  }
+  .viz__orbit { transform: rotate(60deg); }
+  .viz__moon { opacity: 0; }
+
   .site-nav,
   .js .site-nav__list > li {
-    transform: none !important;
-  }
-
-  .media-placeholder__icon {
     transform: none !important;
   }
 

@@ -19,6 +19,13 @@
   /* Tipografia */
   --font-display: "Saira", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
+  --font-heading: "Inter Tight", "Inter", system-ui, sans-serif;
+
+  /* Superfícies translúcidas (cards "produto") */
+  --surface: rgba(255, 255, 255, .025);
+  --surface-2: rgba(255, 255, 255, .05);
+  --line: rgba(255, 255, 255, .08);
+  --line-2: rgba(255, 255, 255, .14);
 
   --fs-sm: clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);
   --fs-base: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
@@ -178,11 +185,10 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 

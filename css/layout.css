@@ -359,28 +359,29 @@ main {
   text-align: center;
 }
 
+/* etiqueta em "chip": pílula com borda fina e ponto vermelho */
 .section__eyebrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: .6rem;
-  margin-bottom: 1rem;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  letter-spacing: .14em;
-  text-transform: uppercase;
+  gap: .5rem;
+  margin-bottom: 1.25rem;
+  padding: .3rem .8rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: .8125rem;
+  font-weight: 500;
   color: var(--cinza);
 }
 
 .section__eyebrow::before {
   content: "";
-  width: 28px;
-  height: 3px;
-  border-radius: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
   background: var(--vermelho);
-  transform: skewX(-20deg);
+  box-shadow: 0 0 0 3px rgba(237, 28, 36, .2);
 }
 
 .section__title {
@@ -396,9 +397,10 @@ main {
 }
 
 /* ---------- Grids das seções ---------- */
-.services__grid {
+/* bento: Rotativo largo, Mensalista alto à direita, Diária e Info embaixo */
+.bento {
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .units__grid {
@@ -407,13 +409,27 @@ main {
 }
 
 @media (min-width: 640px) {
-  .services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .services__grid > :last-child { grid-column: 1 / -1; }
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bento__item--rotativo { grid-column: 1 / -1; }
 }
 
 @media (min-width: 960px) {
-  .services__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-  .services__grid > :last-child { grid-column: auto; }
+  .bento {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      "rot   rot   mes"
+      "dia   info  mes";
+    gap: 1.25rem;
+  }
+  .bento__item--rotativo { grid-area: rot; }
+  .bento__item--mensal   { grid-area: mes; }
+  .bento__item--diaria   { grid-area: dia; }
+  .bento__item--info     { grid-area: info; }
+  /* Rotativo: texto à esquerda, calculadora à direita
+     (seletor com .bento para vencer o .card de components.css, que carrega depois) */
+  .bento > .bento__item--rotativo { flex-direction: row; align-items: center; gap: 3rem; }
+  .bento > .bento__item--rotativo > .card__body { flex: 0 1 42%; }
+  .bento > .bento__item--rotativo .calc { flex: 1; }
   .units__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
 }
 

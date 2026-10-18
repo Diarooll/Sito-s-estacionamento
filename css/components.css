@@ -53,7 +53,7 @@
 .btn--primary {
   --btn-bg: var(--vermelho-btn);
   --btn-bd: var(--vermelho-btn);
-  box-shadow: 0 10px 30px -12px rgba(237, 28, 36, .7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 8px 24px -14px rgba(237, 28, 36, .8);
 }
 
 /* brilho que atravessa o botão no hover (só transform) */
@@ -73,12 +73,12 @@
 
 .btn--primary:hover {
   --btn-bg: var(--vermelho-hover);
-  box-shadow: 0 14px 36px -12px rgba(237, 28, 36, .85);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 10px 28px -14px rgba(237, 28, 36, .9);
 }
 
 .btn--ghost {
-  --btn-bg: rgba(255, 255, 255, .02);
-  --btn-bd: #3a3a3a;
+  --btn-bg: var(--surface-2);
+  --btn-bd: var(--line-2);
 }
 
 .btn--ghost:hover {
@@ -92,80 +92,94 @@
   border-radius: 999px;
 }
 
-/* ---------- Cards ---------- */
+/* ---------- Cards (bento) ----------
+   Superfície translúcida, borda fina com brilho no topo, e o "spotlight"
+   (21st.dev): luz suave + borda acesa seguindo o mouse (cards.js escreve
+   --spot-x/--spot-y e .is-lit). Desligado em is-lite. */
 .card {
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
-  --glow-x: 50%;
-  --glow-y: 0%;
+  --spot-x: 50%;
+  --spot-y: 0px;
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--borda);
+  gap: 1.5rem;
+  padding: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: var(--grafite);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .04), transparent 40%),
+    var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
   overflow: hidden;
   isolation: isolate;
-  transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
-  transition: transform var(--dur) var(--ease-out), border-color var(--dur) linear;
-}
-
-/* brilho radial vermelho seguindo o mouse */
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  background: radial-gradient(420px circle at var(--glow-x) var(--glow-y), rgba(237, 28, 36, .18), transparent 60%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur) var(--ease-out);
+  transition: border-color var(--dur) linear;
 }
 
 .card:hover {
-  border-color: #3a3a3a;
+  border-color: var(--line-2);
 }
 
-.card.is-tilting {
-  transition: border-color var(--dur) linear;
-  will-change: transform;
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease-out);
 }
 
-.card.is-tilting::before {
+/* luz */
+.card::before {
+  background: radial-gradient(380px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, .07), transparent 70%);
+}
+
+/* borda acesa perto do ponteiro: gradiente recortado só na borda (mask) */
+.card::after {
+  inset: -1px;
+  padding: 1px;
+  background: radial-gradient(260px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, .45), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+.card.is-lit::before,
+.card.is-lit::after {
   opacity: 1;
-}
-
-.card__media {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--grafite-2);
 }
 
 .card__body {
   position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: .5rem;
   flex: 1;
-  padding: 1.5rem 1.5rem 1.75rem;
 }
 
 .card__tag {
   align-self: flex-start;
-  padding: .3rem .7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .25rem .65rem;
+  border: 1px solid var(--line-2);
   border-radius: 999px;
-  border: 1px solid rgba(237, 28, 36, .45);
-  background: rgba(237, 28, 36, .1);
-  color: #FF5A5F;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--cinza);
   font-size: .75rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: .02em;
+}
+
+.card__tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vermelho);
 }
 
 .card__title {
@@ -173,30 +187,16 @@
   font-size: var(--fs-h3);
 }
 
-/* preço no rodapé do card: título → nota → preço; sem vão vazio */
 .card__price {
-  order: 3;
   display: flex;
-  flex-direction: column;
-  gap: .2rem;
-  margin-top: auto;
-  padding-top: 1.1rem;
-  border-top: 1px solid var(--borda);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 800;
-  font-size: 1.5rem;
-  line-height: 1.15;
-  color: var(--branco);
+  align-items: baseline;
+  gap: .5rem;
+  margin-top: .25rem;
   font-variant-numeric: tabular-nums;
 }
 
 .card__price-label {
-  font-family: var(--font-body);
-  font-style: normal;
-  font-weight: 500;
   font-size: .8125rem;
-  letter-spacing: .02em;
   color: var(--cinza);
 }
 
@@ -204,7 +204,7 @@
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 800;
-  font-size: clamp(1.75rem, 1.5rem + .8vw, 2.125rem);
+  font-size: clamp(1.75rem, 1.5rem + .8vw, 2.25rem);
   line-height: 1;
   white-space: nowrap;
   color: var(--branco);
@@ -218,91 +218,630 @@
 }
 
 .card__note {
-  order: 2;
+  max-width: 46ch;
   color: var(--cinza);
   font-size: var(--fs-sm);
 }
 
-.card__body > .card__note {
-  margin-bottom: 1.25rem;
-}
-
+/* Mensalista: borda de luz que percorre o contorno (Animated Border, 21st.dev).
+   Um gradiente cônico gira (só transform) atrás de uma máscara que deixa
+   aparecer apenas a borda de 1px. */
 .card--featured {
-  border-color: rgba(237, 28, 36, .55);
+  border-color: rgba(237, 28, 36, .25);
   background:
-    radial-gradient(120% 70% at 100% 0%, rgba(237, 28, 36, .16), transparent 55%),
-    var(--grafite);
-  box-shadow: 0 30px 60px -30px rgba(237, 28, 36, .45);
+    radial-gradient(120% 60% at 100% 0%, rgba(237, 28, 36, .12), transparent 60%),
+    var(--surface);
 }
 
-.card--featured:hover {
-  border-color: var(--vermelho);
+.card__border {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
 }
 
-.card--featured .card__tag {
-  background: var(--vermelho-btn);
-  border-color: var(--vermelho-btn);
-  color: var(--branco);
+.card__border::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200%;
+  aspect-ratio: 1;
+  margin: -100% 0 0 -100%;
+  background: conic-gradient(from 0deg, transparent 0 70%, rgba(237, 28, 36, .9) 85%, #fff 90%, transparent 95%);
+  animation: border-spin 6s linear infinite;
 }
 
-/* tilt desligado em lite/reduced (o JS também não seta, aqui é garantia) */
-.is-lite .card,
-.is-reduced .card {
-  transform: none;
+@keyframes border-spin {
+  to { transform: rotate(1turn); }
 }
+
 .is-lite .card::before,
-.is-reduced .card::before {
+.is-lite .card::after {
   display: none;
 }
 
-/* ---------- Placeholder de mídia (Un. 2 sem foto) ---------- */
-.media-placeholder {
+/* ---------- Mini-ilustrações do bento (decorativas, aria-hidden) ---------- */
+.viz {
   position: relative;
+}
+
+/* ---------- Seletor de unidade (vale para calculadora e simulador) ---------- */
+.unit-switch {
   display: grid;
-  place-items: center;
-  align-content: center;
-  gap: .9rem;
+  justify-items: center;
+  gap: .6rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: 0;
+}
+
+.unit-switch__legend {
+  float: left; /* tira a legend da borda do fieldset */
   width: 100%;
-  height: 100%;
-  min-height: 180px;
-  background:
-    radial-gradient(80% 90% at 50% 30%, rgba(237, 28, 36, .14), transparent 60%),
-    repeating-linear-gradient(-55deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 14px),
-    linear-gradient(160deg, #262626, var(--grafite) 55%, #121212);
-  overflow: hidden;
-}
-
-.media-placeholder__icon {
-  width: clamp(56px, 5vw + 32px, 88px);
-  height: auto;
-  aspect-ratio: 1;
-  filter: drop-shadow(0 10px 24px rgba(237, 28, 36, .35));
-  transition: transform var(--dur-slow) var(--ease-out);
-}
-
-.card:hover .media-placeholder img,
-.unit:hover .media-placeholder__icon {
-  transform: scale(1.06) rotate(-4deg);
-}
-
-.media-placeholder__label {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 700;
+  margin-bottom: 0;
+  text-align: center;
   font-size: .8125rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
   color: var(--cinza);
 }
 
-/* glifo decorativo (lua/calendário) no canto do placeholder */
-.media-placeholder__glyph {
+.unit-switch__options {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.unit-switch__option {
+  position: relative;
+  cursor: pointer;
+}
+
+.unit-switch__option input {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 32px;
-  height: 32px;
-  color: #5a5a5a;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.unit-switch__option span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: .45rem 1rem;
+  border-radius: 999px;
+  color: var(--cinza);
+  font-size: .875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast) linear, color var(--dur-fast) linear;
+}
+
+/* celular: o seletor ocupa a largura toda e as duas opções dividem o espaço */
+@media (max-width: 479px) {
+  .unit-switch__options { display: flex; width: 100%; }
+  .unit-switch__option { flex: 1 1 0; min-width: 0; }
+  .unit-switch__option span {
+    justify-content: center;
+    width: 100%;
+    padding-inline: .5rem;
+    font-size: .8125rem;
+    text-align: center;
+    white-space: normal;
+  }
+}
+
+.unit-switch__option input:checked + span {
+  background: var(--vermelho-btn);
+  color: var(--branco);
+}
+
+.unit-switch__option input:focus-visible + span {
+  outline: 2px solid var(--branco);
+  outline-offset: 2px;
+}
+
+/* sem JS o seletor não faz nada: some (a tabela completa aparece aberta) */
+.no-js .unit-switch { display: none; }
+
+/* preço fixo "a partir de" só aparece sem JS; com JS a calculadora assume */
+.js .card__price--static { display: none; }
+
+.btn--sm {
+  min-height: 40px;
+  padding: .5rem 1rem;
+  font-size: .875rem;
+}
+
+.card__more {
+  align-self: flex-start;
+  margin-top: .75rem;
+}
+
+.no-js .card__more { display: none; }
+
+/* ---------- Rotativo: calculadora com barra ---------- */
+.calc {
+  display: grid;
+  gap: .9rem;
+}
+
+.no-js .calc { display: none; }
+
+.calc__result {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.calc__label {
+  color: var(--cinza);
+  font-weight: 500;
+}
+
+.calc__price {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* barra: trilho translúcido, preenchido em vermelho até o ponto (--pct) */
+.calc__range {
+  --pct: 12.5%;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.calc__range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--vermelho) var(--pct), var(--surface-2) var(--pct));
+}
+
+.calc__range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+.calc__range::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--vermelho);
+}
+
+.calc__range::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--branco);
+  box-shadow: 0 0 0 5px rgba(237, 28, 36, .35);
+  -webkit-appearance: none;
+  appearance: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.calc__range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--branco);
+  box-shadow: 0 0 0 5px rgba(237, 28, 36, .35);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.calc__range:active::-webkit-slider-thumb { transform: scale(1.15); }
+.calc__range:active::-moz-range-thumb { transform: scale(1.15); }
+
+.calc__range:focus-visible {
+  outline: 2px solid var(--branco);
+  outline-offset: 6px;
+  border-radius: 999px;
+}
+
+.calc__ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -.35rem;
+  color: #6f6f6f;
+  font-size: .75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 479px) {
+  /* no celular só as pontas e o meio, para não embolar */
+  .calc__ticks li:nth-child(even) { visibility: hidden; }
+}
+
+/* ---------- Mensalista: simulador de dias ---------- */
+.month {
+  display: grid;
+  gap: .75rem;
+  margin-top: auto;
+}
+
+.no-js .month { display: none; }
+
+.month__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+}
+
+.month__hint {
+  font-size: .8125rem;
+  color: var(--cinza);
+}
+
+.month__actions {
+  display: flex;
+  gap: .4rem;
+}
+
+.month__action {
+  min-height: 32px;
+  padding: .3rem .7rem;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--cinza);
+  font-size: .75rem;
+  font-weight: 600;
+  transition: color var(--dur-fast) linear, border-color var(--dur-fast) linear;
+}
+
+.month__action:hover {
+  color: var(--branco);
+  border-color: var(--branco);
+}
+
+.month__week,
+.month__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.month__week span {
+  text-align: center;
+  font-size: .6875rem;
+  font-weight: 600;
+  color: #6f6f6f;
+}
+
+.month__day {
+  aspect-ratio: 1;
+  min-height: 32px;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--cinza);
+  font-size: .8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color var(--dur-fast) linear,
+    border-color var(--dur-fast) linear,
+    color var(--dur-fast) linear,
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.month__day:hover:not(:disabled) {
+  border-color: rgba(43, 212, 107, .6);
+  color: var(--branco);
+}
+
+.month__day:active:not(:disabled) {
+  transform: scale(.92);
+}
+
+.month__day.is-on {
+  border-color: var(--verde);
+  background: rgba(43, 212, 107, .22);
+  color: var(--branco);
+}
+
+/* domingo: fechado */
+.month__day:disabled {
+  border-style: dashed;
+  border-color: var(--line);
+  background: none;
+  color: #4a4a4a;
+  cursor: not-allowed;
+}
+
+.month__sum {
+  display: grid;
+  gap: .4rem;
+  margin-top: .25rem;
+  padding-top: .9rem;
+  border-top: 1px solid var(--line);
+}
+
+.month__line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.month__line dt {
+  font-size: .875rem;
+  color: var(--cinza);
+}
+
+.month__count {
+  color: #6f6f6f;
+}
+
+.month__line dd {
+  flex: none;
+  margin: 0;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.month__line dd > span {
+  display: inline-block;
+}
+
+.month__line dd small {
+  margin-left: .1em;
+  font-size: .55em;
+  color: var(--cinza);
+}
+
+.month__line--plan dd {
+  font-size: 1.875rem;
+  color: var(--branco);
+}
+
+[data-month-total] {
+  display: inline-block;
+}
+
+.month__verdict {
+  min-height: 1.4em;
+  font-size: .875rem;
+  font-weight: 500;
+  color: var(--cinza);
+}
+
+.month__note {
+  font-size: .75rem;
+  color: #6f6f6f;
+}
+
+/* passou do valor do mensalista: destaque verde */
+.month.is-win .month__verdict {
+  color: var(--verde);
+}
+
+.month.is-win [data-month-total] {
+  color: #ff6b70;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+/* ---------- Janelinha com a tabela completa ---------- */
+.prices-dialog {
+  width: min(680px, calc(100% - 2 * var(--gutter)));
+  max-height: min(88svh, 900px);
+  margin: auto;
+  padding: clamp(1.25rem, 1rem + 1.5vw, 2rem);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-lg);
+  background: #111;
+  color: var(--branco);
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .9);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a transparent;
+}
+
+.prices-dialog::backdrop {
+  background: rgba(0, 0, 0, .7);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.prices-dialog[open] {
+  animation: dialog-in var(--dur) var(--ease-out);
+}
+
+.prices-dialog[open]::backdrop {
+  animation: backdrop-in var(--dur) var(--ease-out);
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translate3d(0, 16px, 0) scale(.98); }
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+}
+
+.is-reduced .prices-dialog[open] {
+  animation-name: backdrop-in; /* só fade */
+}
+
+.is-lite .prices-dialog::backdrop {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(0, 0, 0, .85);
+}
+
+/* sem JS: a "janelinha" aparece aberta, como uma seção normal */
+.no-js .prices-dialog {
+  position: static;
+  display: block;
+  width: 100%;
+  max-height: none;
+  margin-top: 2rem;
+  box-shadow: none;
+}
+
+.no-js .prices-dialog__close { display: none; }
+
+.dialog-open body {
+  overflow: hidden;
+}
+
+.prices-dialog__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.prices-dialog__title {
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+}
+
+.prices-dialog__lead {
+  margin-top: .4rem;
+  color: var(--cinza);
+  font-size: var(--fs-sm);
+}
+
+.prices-dialog__close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--branco);
+  transition: border-color var(--dur-fast) linear;
+}
+
+.prices-dialog__close:hover {
+  border-color: var(--branco);
+}
+
+/* Diária & Pernoite: sol/lua girando num arco (só rotate) */
+.viz--arc {
+  height: 96px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+.viz--arc::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -90px;
+  width: 180px;
+  height: 180px;
+  margin-left: -90px;
+  border: 1px dashed var(--line-2);
+  border-radius: 50%;
+}
+
+/* o astro cruza só a metade de cima (0 → 180°): sol numa passada, lua na outra */
+.viz__orbit {
+  position: absolute;
+  left: 50%;
+  bottom: -90px;
+  width: 180px;
+  height: 180px;
+  margin-left: -90px;
+  animation: orbit 5s var(--ease-in-out) infinite;
+}
+
+.viz__sun,
+.viz__moon {
+  position: absolute;
+  left: -9px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border-radius: 50%;
+}
+
+.viz__sun {
+  background: #ffd36b;
+  box-shadow: 0 0 18px rgba(255, 211, 107, .6);
+  animation: sun-turn 10s steps(1, end) infinite;
+}
+
+.viz__moon {
+  background: #d9dde6;
+  box-shadow: inset -5px -2px 0 #9aa3b5;
+  animation: moon-turn 10s steps(1, end) infinite;
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(180deg); }
+}
+
+@keyframes sun-turn {
+  0%   { opacity: 1; }
+  50%  { opacity: 0; }
+}
+
+@keyframes moon-turn {
+  0%   { opacity: 0; }
+  50%  { opacity: 1; }
+}
+
+/* Info: carros e motos / tolerância */
+.facts {
+  display: grid;
+  gap: 1rem;
+  margin-block: auto;
+}
+
+.facts__item {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  font-weight: 500;
+}
+
+.facts__icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--branco);
 }
 
 /* ---------- Abas ----------
@@ -318,9 +857,9 @@
   max-width: 100%;
   padding: 4px;
   margin-bottom: 1.5rem;
-  border: 1px solid var(--borda);
+  border: 1px solid var(--line);
   border-radius: 999px;
-  background: var(--grafite);
+  background: var(--surface);
 }
 
 .tabs__tab {
@@ -418,9 +957,12 @@
 
 /* ---------- Tabela de preços ---------- */
 .price-table {
-  border: 1px solid var(--borda);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: var(--grafite);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .04), transparent 30%),
+    var(--surface);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
   border-collapse: separate;
   border-spacing: 0;
   overflow: hidden;
@@ -429,7 +971,7 @@
 .price-table th,
 .price-table td {
   padding: .95rem 1.25rem;
-  border-bottom: 1px solid var(--borda);
+  border-bottom: 1px solid var(--line);
   vertical-align: middle;
 }
 
@@ -454,7 +996,7 @@
 }
 
 .price-table__row:hover {
-  background: var(--grafite-2);
+  background: var(--surface-2);
 }
 
 .price {
@@ -638,9 +1180,9 @@
   gap: .65rem;
   min-height: 44px;
   padding: .55rem 1.1rem .55rem .95rem;
-  border: 1px solid var(--borda);
+  border: 1px solid var(--line-2);
   border-radius: 999px;
-  background: var(--grafite);
+  background: var(--surface-2);
   font-weight: 600;
   color: var(--branco);
 }

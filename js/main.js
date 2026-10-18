@@ -16,6 +16,7 @@ const MODULES = [
   ['./modules/counters.js', 'initCounters'],
   ['./modules/scrollspy.js', 'initScrollspy'],
   ['./modules/tabs.js', 'initTabs'],
+  ['./modules/calculator.js', 'initCalculator'],
   ['./modules/cards.js', 'initCards'],
   ['./modules/maps.js', 'initMaps'],
   ['./modules/hours.js', 'initHours'],

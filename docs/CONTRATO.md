@@ -228,3 +228,18 @@ footer.site-footer
   - Cada passagem ocupa ~55% do ciclo e o resto é pausa. A faixa só acende depois de cruzar a coluna do texto.
   - Modos: `.is-lite` mostra 1 faixa; `.is-reduced` deixa as faixas paradas com pulso de opacidade .1–.45 em 9s; `.is-offscreen` pausa.
 - [CSS-main] Abas no celular com "Rua Ana Barbosa" / "Rua Jacinto": `.tabs__tab-short` (markup do HTML-main) só aparece abaixo de 480px e some de 480px em diante, quando entra o `.tabs__tab-extra`. Nas abas, `overflow-wrap: break-word` (no lugar de `anywhere`) + `text-wrap: balance`: em 320px, "Rua Ana / Barbosa" quebra em 2 linhas por palavra. Em 360 e 400px cabe em 1 linha. Indicador alinhado, sem scroll lateral nas abas. Pedido do cliente.
+- [ORQUESTRADOR] (branch teste/moderno) Redesign "moderno produto" — feedback "cara de IA"; alternativa guardada em teste/sinalizacao. Textos, preços, endereços e horários inalterados.
+  - Títulos em **Inter Tight** 600 (tracking negativo); Saira itálico fica só em números/preços. Tokens novos: `--font-heading`, `--surface`, `--surface-2`, `--line`, `--line-2`.
+  - Eyebrows (seções e hero) viram "chip": pílula com borda fina e ponto vermelho. Cabeçalhos continuam centralizados.
+  - Serviços: `.services__grid` → `.bento` (Rotativo largo, Mensalista alto, Diária, Info). Cada card com mini-ilustração `div.viz[aria-hidden]`: `.viz--timeline` (régua 30 min…9h), `.viz--calendar` (28 dias acendendo), `.viz--arc` (sol/lua num arco). Card extra `.bento__item--info` com `ul.facts` (carros e motos / tolerância). Saiu `.card__media`/`.media-placeholder`.
+  - `[data-tilt]` → `[data-spotlight]` (Spotlight do 21st.dev): cards.js escreve `--spot-x/--spot-y` (px) e `.is-lit`; luz + borda acesa via mask. Desligado em lite.
+  - Mensalista: `span.card__border[aria-hidden]` = borda de luz girando (Animated Border do 21st.dev, conic-gradient com rotate + mask).
+  - Unidades: sem placeholder; `span.unit__pin[aria-hidden]` (ícone) antes do título. Tabela, abas, horário e unidades com superfícies translúcidas.
+  - Reduced/prefers-reduced-motion: loops das ilustrações e a borda param num quadro final. Lite: calendário sem onda.
+- [ORQUESTRADOR] (teste/moderno) Preços interativos — pedido do Diego. Módulo novo `js/modules/calculator.js` (no importmap e no main.js).
+  - Seção `#precos` removida e item "Preços" saiu do menu. `#precos` agora é o card Rotativo (link "Ver preços" do hero continua funcionando).
+  - `fieldset.unit-switch[data-unit-switch]` (radios `name="unidade"`, valores `ana-barbosa`/`jacinto`) acima do bento: vale para calculadora e simulador.
+  - Rotativo: `div.calc[data-calc]` com `input.calc__range[data-calc-range]` (0–8 = promo 30 min … 8h01 até 9h), `[data-calc-label]`, `[data-calc-price]`, `aria-valuetext`, `--pct` no input para o preenchimento.
+  - Mensalista: `div.month[data-month]` — JS monta o mês atual em `[data-month-grid]` (`button.month__day[aria-pressed]`, `.is-on` verde; domingo `disabled`). Cada dia = 1 diária; compara com o mensalista (`[data-month-total]`, `[data-month-plan]`, `[data-month-verdict]`, `.month.is-win`). Botões `[data-month-fill]` (seg a sáb) e `[data-month-clear]`.
+  - Tabela completa em `dialog.prices-dialog#precos-dialog` (abas e tabelas de antes, sem `data-reveal`), aberta por `[data-dialog-open="precos-dialog"]`, fecha em `[data-dialog-close]`, Esc ou clique no fundo; abre na aba da unidade escolhida; `html.dialog-open` trava o scroll. **Fonte única dos preços: as tabelas do dialog** (`data-count-to`), lidas pelo calculator.js.
+  - Sem JS: seletor, calculadora e simulador somem; aparece o `.card__price--static` ("a partir de") e o dialog fica aberto inline no fim de #servicos.
