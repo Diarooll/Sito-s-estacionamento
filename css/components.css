@@ -1418,3 +1418,148 @@
 @media (min-width: 960px) {
   .mobile-bar { display: none; }
 }
+
+/* ---------- Horário: linha do tempo da semana (6h–22h) ----------
+   Cada dia é uma barra; o trecho aberto vai de --from a --to (horas).
+   hours.js marca .is-today e --now (hora atual) no dia de hoje. */
+.timeline {
+  --start: 6;
+  --span: 16; /* 6h → 22h */
+  --name-w: 2.75rem;
+  --hours-w: 6.5rem;
+  display: grid;
+  gap: .5rem;
+}
+
+.timeline__scale,
+.timeline__day {
+  display: grid;
+  grid-template-columns: var(--name-w) minmax(0, 1fr) var(--hours-w);
+  align-items: center;
+  gap: .75rem;
+}
+
+/* régua de horas alinhada com as barras */
+.timeline__scale {
+  position: relative;
+  height: 1.25rem;
+}
+
+.timeline__scale span {
+  position: absolute;
+  left: calc(var(--name-w) + .75rem + (100% - var(--name-w) - var(--hours-w) - 1.5rem) * (var(--at) - var(--start)) / var(--span));
+  transform: translateX(-50%);
+  color: #6f6f6f;
+  font-size: .6875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline__days {
+  display: grid;
+  gap: .5rem;
+}
+
+.timeline__day {
+  padding: .45rem 0;
+}
+
+.timeline__name {
+  color: var(--cinza);
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.timeline__bar {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), var(--line) calc(25% - 1px) 25%),
+    var(--surface-2);
+}
+
+.timeline__open {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc((var(--from) - var(--start)) / var(--span) * 100%);
+  width: calc((var(--to) - var(--from)) / var(--span) * 100%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(237, 28, 36, .55), rgba(237, 28, 36, .85));
+  transform-origin: left center;
+}
+
+/* entra crescendo da esquerda quando a seção aparece */
+.js div.hours .timeline__open {
+  transform: scaleX(0);
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.js div.hours.is-visible .timeline__open {
+  transform: none;
+}
+
+.js div.hours.is-visible .timeline__day:nth-child(2) .timeline__open { transition-delay: 60ms; }
+.js div.hours.is-visible .timeline__day:nth-child(3) .timeline__open { transition-delay: 120ms; }
+.js div.hours.is-visible .timeline__day:nth-child(4) .timeline__open { transition-delay: 180ms; }
+.js div.hours.is-visible .timeline__day:nth-child(5) .timeline__open { transition-delay: 240ms; }
+.js div.hours.is-visible .timeline__day:nth-child(6) .timeline__open { transition-delay: 300ms; }
+
+.timeline__hours {
+  justify-self: end;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* hoje: linha destacada */
+.timeline__day.is-today {
+  margin-inline: -.75rem;
+  padding-inline: .75rem;
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+
+.timeline__day.is-today .timeline__name {
+  color: var(--branco);
+}
+
+/* marcador "agora" (só existe com --now; fora de 6h–22h fica escondido) */
+.timeline__day.is-today .timeline__bar::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  left: calc((clamp(var(--start), var(--now, 0), var(--start) + var(--span)) - var(--start)) / var(--span) * 100%);
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: var(--branco);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .15);
+}
+
+.timeline__day.is-today .timeline__bar::before {
+  content: "agora";
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: calc((clamp(var(--start), var(--now, 0), var(--start) + var(--span)) - var(--start)) / var(--span) * 100%);
+  transform: translateX(-50%);
+  color: var(--branco);
+  font-size: .625rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 479px) {
+  .timeline { --name-w: 2.25rem; --hours-w: 5.25rem; }
+  .timeline__scale,
+  .timeline__day { gap: .5rem; }
+  .timeline__scale span {
+    left: calc(var(--name-w) + .5rem + (100% - var(--name-w) - var(--hours-w) - 1rem) * (var(--at) - var(--start)) / var(--span));
+  }
+  .timeline__hours { font-size: .875rem; }
+}

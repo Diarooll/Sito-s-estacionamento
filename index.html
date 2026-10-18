@@ -445,16 +445,49 @@
 
         <div class="hours" data-reveal>
           <p class="hours__status" data-hours-status aria-live="polite">Seg a Sex 7:00–21:00 · Sábado 7:30–17:00</p>
-          <dl class="hours__list">
-            <div class="hours__item">
-              <dt>Seg a Sex</dt>
-              <dd>7:00 – 21:00</dd>
+          <!-- Linha do tempo da semana (6h–22h). hours.js marca o dia de hoje
+               e posiciona o "agora" (--now, em horas) na barra dele. -->
+          <div class="timeline" data-timeline>
+            <div class="timeline__scale" aria-hidden="true">
+              <span style="--at: 6">6h</span>
+              <span style="--at: 10">10h</span>
+              <span style="--at: 14">14h</span>
+              <span style="--at: 18">18h</span>
+              <span style="--at: 22">22h</span>
             </div>
-            <div class="hours__item">
-              <dt>Sábado</dt>
-              <dd>7:30 – 17:00</dd>
-            </div>
-          </dl>
+            <ol class="timeline__days">
+              <li class="timeline__day" data-day="1" style="--from: 7; --to: 21">
+                <span class="timeline__name" aria-hidden="true">Seg</span>
+                <span class="timeline__bar" aria-hidden="true"><span class="timeline__open"></span></span>
+                <span class="timeline__hours"><span class="sr-only">Segunda: </span>7:00–21:00</span>
+              </li>
+              <li class="timeline__day" data-day="2" style="--from: 7; --to: 21">
+                <span class="timeline__name" aria-hidden="true">Ter</span>
+                <span class="timeline__bar" aria-hidden="true"><span class="timeline__open"></span></span>
+                <span class="timeline__hours"><span class="sr-only">Terça: </span>7:00–21:00</span>
+              </li>
+              <li class="timeline__day" data-day="3" style="--from: 7; --to: 21">
+                <span class="timeline__name" aria-hidden="true">Qua</span>
+                <span class="timeline__bar" aria-hidden="true"><span class="timeline__open"></span></span>
+                <span class="timeline__hours"><span class="sr-only">Quarta: </span>7:00–21:00</span>
+              </li>
+              <li class="timeline__day" data-day="4" style="--from: 7; --to: 21">
+                <span class="timeline__name" aria-hidden="true">Qui</span>
+                <span class="timeline__bar" aria-hidden="true"><span class="timeline__open"></span></span>
+                <span class="timeline__hours"><span class="sr-only">Quinta: </span>7:00–21:00</span>
+              </li>
+              <li class="timeline__day" data-day="5" style="--from: 7; --to: 21">
+                <span class="timeline__name" aria-hidden="true">Sex</span>
+                <span class="timeline__bar" aria-hidden="true"><span class="timeline__open"></span></span>
+                <span class="timeline__hours"><span class="sr-only">Sexta: </span>7:00–21:00</span>
+              </li>
+              <li class="timeline__day" data-day="6" style="--from: 7.5; --to: 17">
+                <span class="timeline__name" aria-hidden="true">Sáb</span>
+                <span class="timeline__bar" aria-hidden="true"><span class="timeline__open"></span></span>
+                <span class="timeline__hours"><span class="sr-only">Sábado: </span>7:30–17:00</span>
+              </li>
+            </ol>
+          </div>
         </div>
       </div>
     </section>

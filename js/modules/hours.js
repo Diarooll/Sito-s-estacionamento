@@ -2,6 +2,8 @@
  * hours.js — status "Aberto/Fechado agora" no fuso de São Paulo (Intl),
  * independente do fuso do visitante. Atualiza na virada de cada minuto.
  * [data-hours-status="short"] recebe a versão curta (barra fixa do celular).
+ * [data-timeline]: marca o dia de hoje (.is-today) e põe o "agora" (--now,
+ * em horas decimais) na barra dele.
  */
 
 const TIME_ZONE = 'America/Sao_Paulo';
@@ -58,11 +60,24 @@ function status() {
   return { open: false, text: 'Fechado agora', short: 'Fechado' };
 }
 
+/** Linha do tempo: hoje em destaque + marcador "agora" na hora atual. */
+function renderTimeline(root) {
+  const { day, minute } = nowInSaoPaulo();
+  root.querySelectorAll('[data-day]').forEach((row) => {
+    const today = Number(row.dataset.day) === day;
+    row.classList.toggle('is-today', today);
+    if (today) row.style.setProperty('--now', (minute / 60).toFixed(3));
+    else row.style.removeProperty('--now');
+  });
+}
+
 export function initHours() {
   const targets = document.querySelectorAll('[data-hours-status]');
-  if (!targets.length) return;
+  const timeline = document.querySelector('[data-timeline]');
+  if (!targets.length && !timeline) return;
 
   const render = () => {
+    if (timeline) renderTimeline(timeline);
     const { open, text, short } = status();
     targets.forEach((el) => {
       const value = el.dataset.hoursStatus === 'short' ? short : text;
