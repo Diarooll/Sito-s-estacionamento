@@ -489,6 +489,18 @@ main {
   transition: color var(--dur-fast) linear;
 }
 
+.site-footer__credit {
+  display: block;
+  font-size: .875em;
+}
+
+.site-footer__credit a {
+  display: inline;
+  min-height: 0;
+  padding-block: .5rem;
+  font-weight: 500;
+}
+
 .site-footer__top::after {
   content: "↑";
   margin-left: .45rem;
