@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
-# Monta a pasta dist/ que vai para o ar (Cloudflare Pages).
-# Copia só os arquivos do site, atualiza a versão (?v=) e, se SITE_URL estiver
-# definida (ex.: https://www.sitos.com.br), deixa as URLs de compartilhamento
-# absolutas e gera canonical, robots.txt e sitemap.xml.
+# Monta a pasta dist/ que vai para o ar (Cloudflare Workers, ver wrangler.jsonc).
+# Copia só os arquivos do site, atualiza a versão (?v=), deixa as URLs de
+# compartilhamento absolutas e gera canonical, robots.txt e sitemap.xml.
+# O domínio padrão é https://sitosestacionamento.com.br; SITE_URL troca ele.
 #
-#   SITE_URL=https://www.sitos.com.br ./scripts/build.sh
+#   ./scripts/build.sh
+#   SITE_URL=https://outro.dominio ./scripts/build.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# O build da Cloudflare roda em UTC; datas da versão e do sitemap no horário do Rio.
+export TZ=America/Sao_Paulo
+
 saida=dist
-site_url="${SITE_URL:-}"
+site_url="${SITE_URL:-https://sitosestacionamento.com.br}"
 site_url="${site_url%/}"
 
 rm -rf "$saida"
@@ -45,7 +49,7 @@ else
   echo "Aviso: SITE_URL não definida; sem canonical, robots.txt e sitemap.xml." >&2
 fi
 
-# Cabeçalhos do Cloudflare Pages: segurança básica e cache.
+# Cabeçalhos (_headers, lidos pela Cloudflare): segurança básica e cache.
 # CSS tem ?v= que muda a cada deploy, então pode ficar em cache por 1 ano.
 # JS fica só 1 dia: os imports entre módulos dependem do importmap para pegar a versão.
 cat > "$saida/_headers" <<'EOF'

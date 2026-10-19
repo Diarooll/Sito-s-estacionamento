@@ -2,7 +2,7 @@
 
 Landing page para o **Sito's Estacionamentos**, estacionamento de um cliente com duas unidades no Méier, Rio de Janeiro. O site apresenta o estacionamento, os preços de cada unidade, a localização com mapa e tour 360° e o horário de funcionamento.
 
-🔗 **Site no ar:** https://diarooll.github.io/Sito-s-estacionamento/
+🔗 **Site no ar:** https://sitosestacionamento.com.br
 
 ![Hero da página no desktop](docs/screenshots/desktop-hero.jpg)
 
@@ -25,7 +25,7 @@ Landing page para o **Sito's Estacionamentos**, estacionamento de um cliente com
 - **HTML5, CSS3 e JavaScript (ES modules) puros**, sem frameworks, bibliotecas ou etapa de build
 - Web Animations API, IntersectionObserver, `requestAnimationFrame` e `Intl` (fuso horário)
 - Google Fonts (Saira e Inter) e embeds do Google Maps/Street View
-- Cloudflare Pages para hospedagem (domínio `.com.br` no registro.br)
+- Cloudflare Workers (assets estáticos) para hospedagem (domínio `.com.br` no registro.br)
 - **Ferramentas de IA:** o desenvolvimento usou o Claude Code (Anthropic). Eu planejei e direcionei o projeto, defini os requisitos com o cliente e revisei cada entrega. A implementação foi feita por agentes de IA especializados em HTML, CSS e JavaScript, que trabalharam em paralelo e se coordenaram por um contrato compartilhado ([`docs/CONTRATO.md`](docs/CONTRATO.md)) com os nomes de classes, atributos e decisões do projeto.
 
 ## Telas
@@ -90,24 +90,24 @@ Antes de publicar uma mudança de CSS ou JS:
 ./scripts/versao.sh
 ```
 
-## Publicar (Cloudflare Pages)
+## Publicar (Cloudflare Workers)
 
-O deploy é automático: cada `git push` na `main` coloca o site no ar. O `scripts/build.sh` monta a pasta `dist/` só com `index.html`, `css/`, `js/` e `assets/` (docs, scripts e arquivos do Claude não vão para o ar), atualiza a versão `?v=` sozinho e gera `_headers`, `robots.txt`, `sitemap.xml` e as URLs absolutas de compartilhamento.
+O deploy é automático: cada `git push` na `main` coloca o site no ar em https://sitosestacionamento.com.br. O `scripts/build.sh` monta a pasta `dist/` só com `index.html`, `css/`, `js/` e `assets/` (docs, scripts e arquivos do Claude não vão para o ar), atualiza a versão `?v=` sozinho e gera `_headers`, `robots.txt`, `sitemap.xml` e as URLs absolutas de compartilhamento. O `wrangler.jsonc` publica a `dist/` como assets estáticos do Worker `sito-s-estacionamento`.
 
-Configuração no painel da Cloudflare (*Workers & Pages → Create → Pages → Connect to Git*):
+Configuração no painel da Cloudflare (*Workers & Pages → Create → Workers → Import a repository*):
 
 | Campo | Valor |
 |---|---|
-| Framework preset | None |
 | Build command | `bash scripts/build.sh` |
-| Build output directory | `dist` |
-| Variável de ambiente | `SITE_URL` = `https://www.seudominio.com.br` |
+| Deploy command | `npx wrangler deploy` |
 
-Domínio: registre no registro.br, adicione o site na Cloudflare (plano Free) e troque os servidores DNS no registro.br pelos 2 nameservers que a Cloudflare mostrar. Depois, em *Custom domains* do projeto Pages, adicione o domínio com e sem `www`.
+O domínio já vem como padrão no `build.sh`; para usar outro, defina a variável de build `SITE_URL`.
+
+Domínio: registrado no registro.br, com os servidores DNS trocados pelos 2 nameservers da Cloudflare. No Worker, em *Settings → Domains & Routes → Add → Custom domain*, ficam `sitosestacionamento.com.br` e `www.sitosestacionamento.com.br`. Logo depois da troca de DNS, o roteador de quem já tentou abrir o site pode guardar a resposta antiga por até 1 hora; outra rede (4G) ou o DNS 1.1.1.1 resolvem na hora.
 
 Para testar o build localmente:
 
 ```bash
-SITE_URL=https://www.seudominio.com.br ./scripts/build.sh
+./scripts/build.sh
 python3 -m http.server 8080 -d dist
 ```
