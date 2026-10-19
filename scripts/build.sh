@@ -2,7 +2,7 @@
 # Monta a pasta dist/ que vai para o ar (Cloudflare Workers, ver wrangler.jsonc).
 # Copia só os arquivos do site, atualiza a versão (?v=), deixa as URLs de
 # compartilhamento absolutas e gera canonical, robots.txt e sitemap.xml.
-# O domínio padrão é https://sitosestacionamento.com.br; SITE_URL troca ele.
+# O domínio padrão é https://www.sitosestacionamento.com.br; SITE_URL troca ele.
 #
 #   ./scripts/build.sh
 #   SITE_URL=https://outro.dominio ./scripts/build.sh
@@ -13,7 +13,7 @@ cd "$(dirname "$0")/.."
 export TZ=America/Sao_Paulo
 
 saida=dist
-site_url="${SITE_URL:-https://sitosestacionamento.com.br}"
+site_url="${SITE_URL:-https://www.sitosestacionamento.com.br}"
 site_url="${site_url%/}"
 
 rm -rf "$saida"

@@ -2,7 +2,7 @@
 
 Landing page para o **Sito's Estacionamentos**, estacionamento de um cliente com duas unidades no Méier, Rio de Janeiro. O site apresenta o estacionamento, os preços de cada unidade, a localização com mapa e tour 360° e o horário de funcionamento.
 
-🔗 **Site no ar:** https://sitosestacionamento.com.br
+🔗 **Site no ar:** https://www.sitosestacionamento.com.br
 
 ![Hero da página no desktop](docs/screenshots/desktop-hero.jpg)
 
@@ -92,7 +92,7 @@ Antes de publicar uma mudança de CSS ou JS:
 
 ## Publicar (Cloudflare Workers)
 
-O deploy é automático: cada `git push` na `main` coloca o site no ar em https://sitosestacionamento.com.br. O `scripts/build.sh` monta a pasta `dist/` só com `index.html`, `css/`, `js/` e `assets/` (docs, scripts e arquivos do Claude não vão para o ar), atualiza a versão `?v=` sozinho e gera `_headers`, `robots.txt`, `sitemap.xml` e as URLs absolutas de compartilhamento. O `wrangler.jsonc` publica a `dist/` como assets estáticos do Worker `sito-s-estacionamento`.
+O deploy é automático: cada `git push` na `main` coloca o site no ar em https://www.sitosestacionamento.com.br. O `scripts/build.sh` monta a pasta `dist/` só com `index.html`, `css/`, `js/` e `assets/` (docs, scripts e arquivos do Claude não vão para o ar), atualiza a versão `?v=` sozinho e gera `_headers`, `robots.txt`, `sitemap.xml` e as URLs absolutas de compartilhamento. O `wrangler.jsonc` publica a `dist/` como assets estáticos do Worker `sito-s-estacionamento`.
 
 Configuração no painel da Cloudflare (*Workers & Pages → Create → Workers → Import a repository*):
 
